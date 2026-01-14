@@ -29,13 +29,13 @@ function setup() {
     h1 = h2 = h3 = 40; 
 
     // centres the rects with a 10px margin 
-    x1 = width/2 - w1 - 10; 
+    x1 = width/2 - 10; 
     y1 = height/2; 
 
     x2 = width/2; 
     y2 = height/2; 
 
-    x3 = width/2 + w3 + 10; 
+    x3 = width/2 + 10; 
     y3 = height/2; 
 
     r1 = g1 = b1 = 200; 
@@ -58,7 +58,7 @@ function draw() {
 
    // rect 3
    y3 += 2; 
-   if(y3-h3+10 > height) {
+   if(y3+10 > height) {
     y3 = 0; 
    }
 
