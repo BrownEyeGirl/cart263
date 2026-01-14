@@ -9,14 +9,17 @@
 "use strict";
 
 
+// initialize circle variables 
 let r, g, b;
 let x, y; 
 let size
 
 function setup() {
-    createCanvas(600, 600); 
-    background(255); 
 
+    // create canvas 
+    createCanvas(600, 600); 
+
+    // set values for variables
     r = 200;
     g = 30;
     b = 100; 
@@ -31,6 +34,7 @@ function setup() {
 
 function draw() {
 
+    // draw circles 
     background(0); 
     noStroke(); 
 

@@ -1,4 +1,5 @@
 body {
-  padding: 0;
-  margin: 0;
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
 }
