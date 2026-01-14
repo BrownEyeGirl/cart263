@@ -1,5 +1,5 @@
 /**
- * JS Challenge
+ * JS Challenge 1/7
  * Jan 14, 2026
  * 
  */
