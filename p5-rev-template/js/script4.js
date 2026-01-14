@@ -38,20 +38,20 @@ function draw() {
     noStroke(); 
 
     fill(255); 
-    if(!(mouseX < width/3)) {
+    if(!(mouseX < width/3)) { // if mousex not on rect1, fill with colour
         fill(col1.r, col1.g, col1.b); 
     }
     rect(0, 0, width/3, height); 
 
 
     fill(255); 
-    if(!(mouseX > width/3 && mouseX < 2*width/3)) {
+    if(!(mouseX > width/3 && mouseX < 2*width/3)) { // if mousex not on rect2, fill with colour
         fill(col2.r, col2.g, col2.b); 
     }
     rect(width/3, 0, width/3, height); 
 
     fill(255); 
-    if(!(mouseX > 2*width/3)) {
+    if(!(mouseX > 2*width/3)) { // if mousex not on rect3, fill with colour
         fill(col3.r, col3.g, col3.b); 
     }
     rect(2*width/3, 0, width/3, height); 
