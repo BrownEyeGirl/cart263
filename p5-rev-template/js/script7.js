@@ -20,9 +20,9 @@ let slider;
 function setup() {
     createCanvas(600, 600);
 
-    slider = createSlider(10, 100);
+    slider = createSlider(1, 20);
     slider.position(10, 10);
-    slider.size(80);
+    slider.size(100);
 
 
     radius = slider.value(); 
@@ -38,7 +38,8 @@ function setup() {
 
 function draw() {
     background(0);
-    radius = slider.value(); 
+    radius = slider.value()*5; 
+    margin=width%radius; // makes sure the dots are centred 
 
     for(let x = radius+margin; x < width; x+=radius+margin) {
         for(let y = radius+margin; y < height; y+=radius+margin) {
