@@ -139,6 +139,10 @@ a background using that color.
     innerContainers[i].style.background=colors[i];}
  */
 
+/** OUTPUT
+ * (Screen grab of output in the output-images folder)
+ */
+
 /*************************************** */
 /*** END PART TWO MODIFY */ 
 
@@ -174,7 +178,7 @@ function customCreateElement(parent){
 
 
 /***EXPLANATION::
- * (Screen grab in the solutions folder)
+ * (Screen grab in the output-images folder)
  * The function customCreateElement sets html and css attributes for the new "p" element it creates, then appends this to the parent element passed into the arguments.
  * Here, the parent element for each new "p" tag is all elements with "p". 
  * 
