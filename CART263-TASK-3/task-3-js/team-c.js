@@ -202,7 +202,7 @@ function setup_C() {
       for (let i = 0; i < dots.length; i++) {
         const angle = (i / dotCount) * Math.PI * 4;
 
-        const x = Math.cos(angle) *r + (container.offsetWidth / 2); // to centre it
+        const x = Math.cos(angle) * r + (container.offsetWidth / 2); // to centre it
         const y = Math.tan(angle) * r + (container.offsetHeight / 2);
 
         const wave = Math.cos(angle+time*0.5); // the angle changes 
