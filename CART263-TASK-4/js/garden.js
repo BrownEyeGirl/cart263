@@ -147,7 +147,8 @@ window.onload = function () {
             let y = 100;//make this home beehive
             let w = Math.floor(Math.random() * 5 + 1) * 20;//makes the bees 20,40,60,80
             let h = Math.floor(Math.random() * 5 + 1) * 20;
-            let tint = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, ${255})`;//does random color change with 100% opacity on mask tint layer
+            // tint wasnt working properly so i commented it out
+            let tint = "transparent";//`rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, ${255})`;//does random color change with 100% opacity on mask tint layer
             let bee = new Bee(x, y, w, h, tint);
             garden.bees.push(bee);//pushes bee into bees array
         }
