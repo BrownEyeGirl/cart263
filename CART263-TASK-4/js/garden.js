@@ -105,7 +105,7 @@ window.onload = function () {
             garden.beeHive.push(beeHive);
         }
         // Tried to flip the image but it didnt work :(
-        garden.beeHive[1].hiveDiv.style.transform = "scaleX(-1)";
+        garden.beeHive[1].hiveDiv.style.transform = "scaleX(-X)";
         console.log(garden.beeHive[1].hiveDiv.style.transform);
     }
     /**
