@@ -47,9 +47,11 @@ function randNum(min, max) {
 }
 
 
+
 let drawingBoardB = new DrawingBoard(theCanvases[1],theContexts[1],theCanvases[1].id);
 //add a rectangular object to canvas B
 drawingBoardB.addObj(new RectangularObj(100,100,50,70,"#FF5733","#E6E6FA",drawingBoardB.context))
+
 drawingBoardB.display();
 
 
