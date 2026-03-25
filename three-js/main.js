@@ -27,6 +27,26 @@ const mesh = new THREE.Mesh(geometry, material) // makes a mesh of combined mate
 //D: ADD TO THE SCENE
 scene.add(mesh) // 
 
+// Mesh 2
+const mesh_2 = new THREE.Mesh(geometry, material) // another box with the same mesh 
+scene.add(mesh_2)
+mesh_2.position.x = 1.5
+mesh_2.position.y = 1.25
+mesh_2.position.z = -1
+
+
+//TURN ON AXES HELPER
+//https://threejs.org/docs/?q=Axes#AxesHelper
+const axesHelper = new THREE.AxesHelper(1)
+scene.add(axesHelper)
+//move it 
+axesHelper.position.x = -1;
+axesHelper.position.y = -1;
+
+
+
+
+
 // 3. CAMERA 
 const sizes = {
     width: 800,
@@ -37,7 +57,6 @@ camera.position.z = 3 // zooms us outside of the cube as viewers
 scene.add(camera)
 
 // 4. RENDERER 
-
 //Access the Canvas
 const canvas = document.querySelector('canvas#three-ex') // access canvas 
 const renderer = new THREE.WebGLRenderer({
@@ -47,6 +66,7 @@ renderer.setSize(sizes.width, sizes.height) //give renderer the size
 
 //render:
 renderer.render(scene, camera) // translates everything into pixels 
+
 
 
 
