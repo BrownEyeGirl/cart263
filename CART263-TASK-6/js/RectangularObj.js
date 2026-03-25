@@ -10,8 +10,8 @@ class RectangularObj {
     this.stroke_color = s_color;
     this.context = context;
 
-    let c = this.context; 
-    c.shadowColor = "rgba(0, 180, 255, 8)";
+    const c = this.context; 
+    c.shadowColor = "rgba(0, 180, 255, 10)";
     c.shadowBlur = 20;        // strength of glow
     c.shadowOffsetX = 0.5;
     c.shadowOffsetY = 0;
@@ -21,12 +21,12 @@ class RectangularObj {
   }
 
   display() {
-    const ctx = this.context;
-    ctx.fillStyle = this.fill_color;
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = this.stroke_color;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    const c = this.context;
+    c.fillStyle = this.fill_color;
+    c.fillRect(this.x, this.y, this.width, this.height);
+    c.strokeStyle = this.stroke_color;
+    c.lineWidth = 2;
+    c.strokeRect(this.x, this.y, this.width, this.height);
   }
 
   update(avgVolume = 0) {
@@ -39,13 +39,13 @@ class RectangularObj {
     this.xCenter = this.x - (this.width - this.baseWidth) / 2;
     this.yCenter = this.y - (this.height - this.baseHeight) / 2;
 
-    const ctx = this.context;
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height); // clear canvas
-    ctx.fillStyle = this.fill_color;
-    ctx.strokeStyle = this.stroke_color;
-    ctx.lineWidth = 2;
-    ctx.fillRect(this.xCenter, this.yCenter, this.width, this.height);
-    ctx.strokeRect(this.xCenter, this.yCenter, this.width, this.height);
+    const c = this.context;
+    c.clearRect(0, 0, c.canvas.width, c.canvas.height); // clear canvas
+    c.fillStyle = this.fill_color;
+    c.strokeStyle = this.stroke_color;
+    c.lineWidth = 2;
+    c.fillRect(this.xCenter, this.yCenter, this.width, this.height);
+    c.strokeRect(this.xCenter, this.yCenter, this.width, this.height);
   }
 
   async initMic() {
