@@ -57,6 +57,10 @@ const torus = new THREE.Mesh(
 )
 torus.position.x = 1.5
 
+//material.wireframe = true
+material.transparent = true
+material.opacity = 0.5
+
 scene.add(sphere, plane, torus)
 
 
