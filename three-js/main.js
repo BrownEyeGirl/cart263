@@ -39,6 +39,10 @@ mesh.scale.x = 2
 mesh.scale.y = 0.25 // scaled from 1 (default
 mesh.scale.z = 0.5
 
+// rotations 
+mesh.rotation.x = Math.PI * 0.25 // order matters, in radians, also see quaternions (https://threejs.org/docs/#Quaternion) to fix rotational issues 
+mesh.rotation.y = Math.PI * 0.25
+
 
 
 //TURN ON AXES HELPER
@@ -61,6 +65,12 @@ const sizes = {
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height) // creates perspective cam, dif kinds of them: field of view (75 degrees), aspect ratio (w of canvas/height of canvas)
 camera.position.z = 3 // zooms us outside of the cube as viewers 
 scene.add(camera)
+
+// rotate (to look at a dif object)
+  camera.lookAt(new THREE.Vector3(0, - 1, 0))
+  //or
+  camera.lookAt(mesh_2.position) // look at vector of mesh 2 positon vs camera 
+
 
 // 4. RENDERER 
 //Access the Canvas
