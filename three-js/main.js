@@ -34,6 +34,12 @@ mesh_2.position.x = 1.5
 mesh_2.position.y = 1.25
 mesh_2.position.z = -1
 
+// scaling 
+mesh.scale.x = 2
+mesh.scale.y = 0.25 // scaled from 1 (default
+mesh.scale.z = 0.5
+
+
 
 //TURN ON AXES HELPER
 //https://threejs.org/docs/?q=Axes#AxesHelper
