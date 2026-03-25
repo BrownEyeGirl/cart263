@@ -24,7 +24,21 @@ const geometry = new THREE.BoxGeometry(1, 1, 1) // 3d coordinates, vague units ?
 //const material = new THREE.MeshBasicMaterial({ color: 0x800080 }) // color can also b hex or rgb 
 //C: put together
 
-const material = new THREE.MeshBasicMaterial()
+// textures 
+const loader = new THREE.TextureLoader();
+const water_texture = await loader.loadAsync( 'textures/Ice002_1K-JPG_Color.jpg' );
+//need to ensure that the textures are encoded correctly - mapping the colors correctly.
+water_texture.colorSpace = THREE.SRGBColorSpace;
+
+
+const material = new THREE.MeshBasicMaterial({
+    map: water_texture
+})
+
+material.color = new THREE.Color('#ad86dd') // or
+material.color = new THREE.Color('rgb(0, 128, 255)')
+material.map = water_texture
+material.color = new THREE.Color('#f1b6fb')
 
 const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 16, 16),
@@ -53,8 +67,6 @@ scene.add(axesHelper)
 //move it 
 axesHelper.position.x = -1;
 axesHelper.position.y = -1;
-
-
 
 
 
