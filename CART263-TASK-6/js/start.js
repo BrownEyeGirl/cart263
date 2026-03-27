@@ -1,3 +1,4 @@
+
 window.onload = go_all_stuff;
 
 function go_all_stuff() {
@@ -43,8 +44,7 @@ function go_all_stuff() {
 
 
     let drawingBoardD = new DrawingBoard(theCanvases[3], theContexts[3], theCanvases[3].id);
-    drawingBoardD.addObj(new VideoObj(0, 0, 400, 300, videoEl, drawingBoardD.context));
-   // drawingBoardD.updatePositionRec(drawingBoardD.mouseOffsetX, drawingBoardD.mouseOffsetY)
+    drawingBoardD.addObj(new VideoObj(0, 0, 400, 300, videoEl, drawingBoardD.context))
     drawingBoardD.display();
 
 

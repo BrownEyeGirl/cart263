@@ -36,7 +36,7 @@ class FreeStyleObj {
     }
     update() {
         //update freestyle
-        console.log(this.avgVolume);
+        //console.log(this.avgVolume);
         // this.x+=1;
 
         let v = this.avgVolume;
@@ -56,7 +56,7 @@ class FreeStyleObj {
         this.stroke_color = `rgb(${r}, ${g}, ${b})`;
         this.fill_color = `rgb(${r1}, ${g1}, ${b1})`;
 
-        console.log(this.stroke_color)
+        //console.log(this.stroke_color)
     }
 
     async getMicrophoneInput() {//async b/c we have await for mic permission
@@ -75,7 +75,7 @@ class FreeStyleObj {
 
             //pass the microphone input to the web audio API
             let microphoneIn = audioContext.createMediaStreamSource(audioStream);
-            console.log(microphoneIn);
+            //console.log(microphoneIn);
 
 
             const analyser = audioContext.createAnalyser();
@@ -104,7 +104,7 @@ class FreeStyleObj {
                 // logs avg volume 
                 this.avgVolume = sum / freqData.length;
 
-                console.log(this.avgVolume);
+                //console.log(this.avgVolume);
 
                 // recurse loop it 
                 requestAnimationFrame(animateFrequencies);

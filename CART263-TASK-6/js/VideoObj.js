@@ -6,8 +6,8 @@ class VideoObj {
         this.y = y;
         this.w = w;
         this.h = h;
-        this.shapeX = 20;
-        this.shapeY = 20;
+        this.shapeX = 10;
+        this.shapeY = 10;
         this.shapeCol = "#000000";
 
 
@@ -21,7 +21,7 @@ class VideoObj {
         filterButton_blur.addEventListener("click", function () {
             //get value from input field
             self.userProvidedBlur = blurInput.value;
-            console.log(self.userProvidedBlur);
+            //console.log(self.userProvidedBlur);
 
         });
 
@@ -32,7 +32,7 @@ class VideoObj {
 
         filterButton_sepia.addEventListener("click", function () {
             self.userProvidedSepia = sepiaInput.value;
-            console.log(self.userProvidedSepia);
+            //console.log(self.userProvidedSepia);
         });
 
 
@@ -42,7 +42,7 @@ class VideoObj {
 
         filterButton_hue.addEventListener("click", function () {
             self.userProvidedHue = hueInput.value;
-            console.log(self.userProvidedHue);
+            //console.log(self.userProvidedHue);
         });
 
 
@@ -52,8 +52,7 @@ class VideoObj {
 
         filterButton_invert.addEventListener("click", function () {
             self.userProvidedInvert = invertInput.value;
-            console.log(self.userProvidedInvert);
-    
+            //console.log(self.userProvidedInvert);
         });
 
     }
@@ -76,6 +75,7 @@ class VideoObj {
         this.context.fillRect(this.shapeX, this.shapeY, 50, 50)
 
         this.context.restore();
+
     }
 
     //called when rectangle color is to be updated
@@ -88,11 +88,8 @@ class VideoObj {
         /** FILL IN */
         this.shapeX = mx;
         this.shapeY = my;
-        console.log("updating", this.mouseOffsetX)
-
     }
     update(videoElement) {
         this.videoElement = videoElement;
-        this.updatePositionRect(this.context.mouseOffsetX, this.context.mouseOffsetY)
     }
 }
