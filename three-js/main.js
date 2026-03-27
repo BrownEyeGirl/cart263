@@ -40,12 +40,12 @@ material.color = new THREE.Color('rgb(0, 128, 255)')
 material.map = water_texture
 material.color = new THREE.Color('#f1b6fb')
 
-const sphere = new THREE.Mesh(
+/*const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 16, 16),
     material
 )
 sphere.position.x = - 1.5
-
+*/
 const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(1, 1),
     material
@@ -60,6 +60,26 @@ torus.position.x = 1.5
 //material.wireframe = true
 material.transparent = true
 material.opacity = 0.5
+// new groupd 
+ const group = new THREE.Group()
+scene.add(group)
+
+const cube1 = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshBasicMaterial({ color: 0xff0000,wireframe: true })
+)
+cube1.position.x = 1.5
+group.add(cube1)
+/*https://threejs.org/docs/#SphereGeometry*/
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry( .75, 32 , 16 ),
+  new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true})
+)
+sphere.position.y = 1.5
+sphere.position.x = 3
+group.add(sphere)
+
+
 
 scene.add(sphere, plane, torus)
 

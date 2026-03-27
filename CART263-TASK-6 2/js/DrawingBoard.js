@@ -13,12 +13,11 @@ class DrawingBoard {
 
     this.canvas.addEventListener("mousemove", function (e) {
       self.overCanvas(e);
-     // console.log("mouseover")
     });
   }
 
   overCanvas(e) {
-    console.log("over");
+    //console.log("over");
     this.canvasBoundingRegion = this.canvas.getBoundingClientRect();
     this.mouseOffsetX = parseInt(e.clientX - this.canvasBoundingRegion.x);
     this.mouseOffsetY = parseInt(e.clientY - this.canvasBoundingRegion.y);
@@ -26,7 +25,6 @@ class DrawingBoard {
     //differentiate which canvas
     //you can remove the console.logs /// 
     if(this.drawingBoardId ==="partA"){
-      //this.objectsOnCanvas=[]; 
       console.log("in A")
     }
     if(this.drawingBoardId ==="partB"){
@@ -50,6 +48,7 @@ class DrawingBoard {
     //differentiate which canvas
    //you can remove the console.logs /// 
      if(this.drawingBoardId ==="partA"){
+      console.log("in A")
     }
     if(this.drawingBoardId ==="partB"){
       console.log("in B")
@@ -66,10 +65,6 @@ class DrawingBoard {
     this.objectsOnCanvas.push(objToAdd);
   }
 
-  clearObjs() {
-    this.objectsOnCanvas = []; 
-  }
-
   /* method to add display objects on canvas */
   display() {
     for (let i = 0; i < this.objectsOnCanvas.length; i++) {
@@ -79,8 +74,8 @@ class DrawingBoard {
 
   /* method to add animate objects on canvas */
   animate() {
-    this.context.clearRect(0,0,this.canvas.width,this.canvas.height)
     for (let i = 0; i < this.objectsOnCanvas.length; i++) {
+     this.context.clearRect(0,0,this.canvas.width,this.canvas.height)
      this.objectsOnCanvas[i].update();
      this.objectsOnCanvas[i].display();
     }

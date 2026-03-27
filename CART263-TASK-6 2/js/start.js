@@ -24,16 +24,16 @@ for(let i =0; i<theCanvases.length; i++){
 }
 
 let drawingBoardA = new DrawingBoard(theCanvases[0],theContexts[0],theCanvases[0].id);
+//add a circular object to canvas A
+//drawingBoardA.addObj(new CircularObj(100,100,20,"#FFC300","#E6E6FA", drawingBoardA.context))
 
-
-function randNum(min, max) {
-  return Math.random() * (max - min) + min;
-}
 
 
 
 let drawingBoardB = new DrawingBoard(theCanvases[1],theContexts[1],theCanvases[1].id);
-
+//add a rectangular object to canvas B
+drawingBoardB.addObj(new RectangularObj(100,100,50,70,"#FF5733","#E6E6FA",drawingBoardB.context))
+drawingBoardB.display();
 
 
 let drawingBoardC = new DrawingBoard(theCanvases[2],theContexts[2],theCanvases[2].id);
@@ -75,24 +75,21 @@ function animationLoop(){
 
 
 let colours = ["#bcc0f9ff", "rgba(134, 175, 246, 1)", "#00d0ffff", "#5100ffff", "#ffdefaff"]
-//add a circular object to canvas A
-//drawingBoardA.addObj(new CircularObj(100,100,20, colours[Math.floor(Math.random() * colours.length)],"#E6E6FA", drawingBoardA.context))
 
-// add snow on click 
-drawingBoardA.clickCanvas = function(e) {
+// add on click 
+theCanvases[0].addEventListener("click", function (event) {
   drawingBoardA.addObj(new CircularObj(drawingBoardA.mouseOffsetX,0,5,colours[Math.floor(Math.random() * colours.length)],"#E6E6FA", drawingBoardA.context))
-};
+});
 
-// use space to erase snow 
+
 window.addEventListener("keydown", function (event) {
   if (event.code === "Space") { 
        drawingBoardA.clearObjs(); 
-       console.log("cleared")
+       console.log("cleared");
    }
 });
 
-  drawingBoardA.display();
-
+drawingBoardA.display();
 
 /** TASK 2:(Drawing Board B) - 
  *  1: Affect the rectangle by input from the microphone somehow, in real time...
@@ -101,18 +98,6 @@ window.addEventListener("keydown", function (event) {
  * -> the code for the microphone has NOT been added  - you need to implement it correctly...
  *  
  */
-
-
-//add a rectangular object to canvas B
-drawingBoardB.addObj(new RectangularObj(100,100,50,70, randNum(0, colours.length),"#E6E6FA",drawingBoardB.context))
-
-
-// "jump", height depends on 
-
-
-
-drawingBoardB.display();
-
 
 /** TASK 3:(Drawing Board C) - 
  *  1: Affect the free-style shape by input from the microphone somehow, in real time...

@@ -10,6 +10,8 @@ class RectangularObj {
     this.stroke_color = s_color;
     this.context = context;
 
+    this.avgVolume = 0; // store mic volume
+
     const c = this.context; 
     c.shadowColor = "rgba(0, 180, 255, 10)";
     c.shadowBlur = 20;        // strength of glow
@@ -29,53 +31,69 @@ class RectangularObj {
     c.strokeRect(this.x, this.y, this.width, this.height);
   }
 
-  update(avgVolume = 0) {
-    // update the size based on average microphone volume
-    const scale = 0.5 + avgVolume * 3; // adjust sensitivity of reaction
+  update() {
+    const scale = 0.5 + this.avgVolume * 0.01;
+
     this.width = this.baseWidth * scale;
     this.height = this.baseHeight * scale;
 
-    // rectangle centered
     this.xCenter = this.x - (this.width - this.baseWidth) / 2;
     this.yCenter = this.y - (this.height - this.baseHeight) / 2;
-
-    const c = this.context;
-    c.clearRect(0, 0, c.canvas.width, c.canvas.height); // clear canvas
-    c.fillStyle = this.fill_color;
-    c.strokeStyle = this.stroke_color;
-    c.lineWidth = 2;
-    c.fillRect(this.xCenter, this.yCenter, this.width, this.height);
-    c.strokeRect(this.xCenter, this.yCenter, this.width, this.height);
   }
 
   async initMic() {
+    console.log("here we are ");
+
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioContext = new AudioContext(); // create audio processor 
+
     try {
-      window.AudioContext = window.AudioContext || window.webkitAudioContext;
-      const audioCtx = new AudioContext();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const micSource = audioCtx.createMediaStreamSource(stream);
+      // get mic access 
+      let audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
 
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 1024;
-      micSource.connect(analyser);
+      // connect microphone to audio processor 
+      let microphoneIn = audioContext.createMediaStreamSource(audioStream);
 
-      const bufferLength = analyser.frequencyBinCount;
-      const dataArray = new Uint8Array(bufferLength);
+      // processing modes 
+      const filter = audioContext.createBiquadFilter();
+      const analyser = audioContext.createAnalyser();
 
-      const animate = () => {
-        analyser.getByteFrequencyData(dataArray);
-        const volumeArray = Array.from(dataArray).map(v => v / 255);
-        const avgVolume = volumeArray.reduce((a,b) => a + b, 0) / volumeArray.length;
+      // connects the mic to the processing modes 
+      microphoneIn.connect(filter);
+      filter.connect(analyser);
 
-        this.update(avgVolume);
+      analyser.fftSize = 32; // size of data stored 
 
-        requestAnimationFrame(animate);
+      // create array to hold sound values 
+      let frequencyData = new Uint8Array(analyser.frequencyBinCount);
+      
+
+      // call animation loop 
+      const animateFrequencies = () => {
+        analyser.getByteFrequencyData(frequencyData);
+
+        let sum = 0;
+
+        for (let i = 0; i < frequencyData.length; i++) {
+          sum += frequencyData[i];
+        }
+
+        // logs avg volume 
+        this.avgVolume = sum / frequencyData.length;
+
+        console.log(this.avgVolume);
+
+        // recurse loop it 
+        requestAnimationFrame(animateFrequencies);
       };
 
-      animate();
+      animateFrequencies();
 
     } catch (err) {
-      console.error("Error accessing microphone:", err);
+      /* handle the error */
+      console.log("had an error getting the microphone");
     }
   }
 }
