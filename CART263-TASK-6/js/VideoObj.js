@@ -6,8 +6,8 @@ class VideoObj {
         this.y = y;
         this.w = w;
         this.h = h;
-        this.shapeX = 10;
-        this.shapeY = 10;
+        this.shapeX = 20;
+        this.shapeY = 20;
         this.shapeCol = "#000000";
 
 
@@ -53,6 +53,7 @@ class VideoObj {
         filterButton_invert.addEventListener("click", function () {
             self.userProvidedInvert = invertInput.value;
             console.log(self.userProvidedInvert);
+    
         });
 
     }
@@ -87,8 +88,11 @@ class VideoObj {
         /** FILL IN */
         this.shapeX = mx;
         this.shapeY = my;
+        console.log("updating", this.mouseOffsetX)
+
     }
     update(videoElement) {
         this.videoElement = videoElement;
+        this.updatePositionRect(this.context.mouseOffsetX, this.context.mouseOffsetY)
     }
 }

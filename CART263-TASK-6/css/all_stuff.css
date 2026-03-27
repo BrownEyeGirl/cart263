@@ -9,10 +9,10 @@ body {
 }
 
 h1 {
-  
+
     width: 50vw;
     margin: 0 auto;
-    margin-top:20px;
+    margin-top: 20px;
     text-align: center;
     color: rgb(226, 43, 141);
 
@@ -21,36 +21,43 @@ h1 {
 main {
     width: 50vw;
     margin: 0 auto;
-    margin-top:20px;
+    margin-top: 20px;
     text-align: center;
-    background:rgb(169, 8, 96);
-    display:flex;
-    flex-wrap:wrap;
-    position:relative;
+    background: rgb(169, 8, 96);
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
 
 }
-.canvases{
-    width:400px;
-    height:300px;
-    background:black;
-    position:relative;
+
+.canvases {
+    width: 400px;
+    height: 300px;
+    background: black;
+    position: relative;
     /* position:absolute; */
 }
-.container{
-    margin:10px;
-    width:400px;
-    height:350px;
-    background:white;
+
+.container {
+    margin: 10px;
+    width: 400px;
+    height: 350px;
+    background: white;
 }
-.container .button-g{
-    background:rgb(226, 43, 141);
-    height:50px;
-    display:flex;
+
+.container .button-g {
+    background: rgb(226, 43, 141);
+    height: 50px;
+    display: flex;
     justify-content: space-around;
 }
-#filter_button_blur, #filter_button_sepia, #filter_button_hue, #filter_button_invert{
-    padding-top:10px;
-    height:40px;
-    min-width:20%;
-    font-size:14px;
+
+#filter_button_blur,
+#filter_button_sepia,
+#filter_button_hue,
+#filter_button_invert {
+    padding-top: 10px;
+    height: 40px;
+    min-width: 20%;
+    font-size: 14px;
 }
