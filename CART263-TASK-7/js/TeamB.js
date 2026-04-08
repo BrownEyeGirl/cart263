@@ -135,6 +135,12 @@ export class PlanetB {
             tree2.scale.set(5,5,5);
             tree2.rotation.x = Math.PI/2; 
             planetB.add(tree2)
+
+            var tree3 = tree1.clone(); 
+            tree3.position.set(0, -1.4, 0); // position
+            tree3.scale.set(5,5,5);
+            tree3.rotation.x = Math.PI; 
+            planetB.add(tree3)
         },
         undefined,
         (error) => {
