@@ -1,0 +1,11 @@
+Model Information:
+* title:	The Traveler
+* source:	https://sketchfab.com/3d-models/the-traveler-065fc05398bf4bcc915ed6ac36d844c5
+* author:	dnt2 (https://sketchfab.com/dnt2)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "The Traveler" (https://sketchfab.com/3d-models/the-traveler-065fc05398bf4bcc915ed6ac36d844c5) by dnt2 (https://sketchfab.com/dnt2) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

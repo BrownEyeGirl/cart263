@@ -1,18 +1,31 @@
+/**
+ * hatman -> https://sketchfab.com/3d-models/the-traveler-065fc05398bf4bcc915ed6ac36d844c5
+ */
+
+
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
 
 const scene = new THREE.Scene();
+
 // Canvas
 const canvas = document.querySelector("canvas#three-ex");
 
 //Ambient Light
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-scene.add(ambientLight);
+//const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+//scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1.5);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
 directionalLight.position.set(2, 2, -1);
 scene.add(directionalLight)
+
+const hatmanLight = new THREE.DirectionalLight(0xffff, 0.5);
+directionalLight.position.set(1, 1, -1);
+scene.add(directionalLight)
+
 
 //Sphere and plane
 const geometry = new THREE.SphereGeometry(0.5, 32, 32);
@@ -23,10 +36,42 @@ const sphere = new THREE.Mesh(geometry, material);
 sphere.position.set(0, 1, 0)
 scene.add(sphere);
 
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), material);
+// load in model 
+const loader = new GLTFLoader();
+
+loader.load(
+  '/media/hatman/scene.gltf', // path to your model
+  (gltf) => {
+    const hatman = gltf.scene;
+    hatman.position.set(0, 0, 0); // position
+    hatman.scale.set(1, 1, 1); // scale 
+    hatman.rotation.y = Math.PI; // rotate 
+    scene.add(hatman);
+  },
+  undefined,
+  (error) => {
+    console.error('Error loading model:', error);
+  }
+);
+//scene.add( gltf.scene );
+
+
+
+//const ground = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+const ground = new THREE.MeshLambertMaterial({
+  color: 0xffff,
+  blending: THREE.NormalBlending,
+ transparent: false
+});
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), ground);
+plane.receiveShadow = true; // Receives shadow
+
 scene.add(plane);
 plane.rotation.x = -Math.PI * 0.5;
 plane.position.y = -0.5;
+
+
+
 
 const sizes = {
   width: window.innerWidth,
@@ -87,3 +132,4 @@ function animate() {
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);
 }
+

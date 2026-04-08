@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tone.js Minimal Synth Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 24px;
+      }
+      button {
+        padding: 10px 16px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      #status {
+        margin-top: 12px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Minimal Tone.js Synth Example</h1>
+    <button id="playBtn">Start Audio + Play C4</button>
+    <div id="status">Status: waiting for clickâ¦</div>
+    <script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+    <script>
+      const statusEl = document.getElementById("status");
+      const playBtn = document.getElementById("playBtn");
+
+      // Create the synth once
+      const synth = new Tone.Synth().toDestination();
+
+      playBtn.addEventListener("click", async () => {
+        // Must be triggered by a user gesture
+        await Tone.start();
+        statusEl.textContent = "Status: audio started playingâ¦";
+
+        // Play one note
+        synth.triggerAttackRelease("C4", "0.5");
+
+        playBtn.disabled = true;
+        setTimeout(() => {
+          playBtn.disabled = false;
+          statusEl.textContent = "Status: ready";
+        }, 600);
+      });
+    </script>
+  </body>
+</html>

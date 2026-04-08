@@ -1,5 +1,14 @@
+/**
+ * 
+ * Credits: 
+ *  water -> https://github.com/franky-adl/water-ripples
+ */
+
+
 import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
 import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+
+
 
 let scene, camera, renderer, controls;
 
@@ -26,6 +35,8 @@ function init() {
 
   document.body.appendChild(renderer.domElement);
 
+
+  
   //  Skybox
   const loader = new THREE.CubeTextureLoader();
   const skyboxTexture = loader.load([
@@ -39,11 +50,11 @@ function init() {
     "./textures/skybox/bluecloud_rt.jpg", // px (right)
 
 "./textures/skybox/bluecloud_lf.jpg" // nx (left) 
-
-    
-  
   ]);
+  
   scene.background = skyboxTexture;
+scene.fog = new THREE.Fog(0xcccccc, 10, 100);
+  //document.body.style.filter = 'saturate(0.3)';
 
   //  Controls 
   controls = new OrbitControls(camera, renderer.domElement);
