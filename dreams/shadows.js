@@ -7,6 +7,8 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+
 
 const scene = new THREE.Scene();
 
@@ -38,7 +40,7 @@ sphere.position.set(0, 1, 0)
 
 
 // Scene creation (houses )
-const burbLoader = new GLTFLoader();
+/*const burbLoader = new GLTFLoader();
 
         burbLoader.load(
         '/media/generic_suburb/scene.gltf', // path to model
@@ -50,7 +52,6 @@ const burbLoader = new GLTFLoader();
               node.receiveShadow = true;
           }
           });
-
 
             const burb = gltf.scene;
             burb.position.set(0, -0.5, 0); // position
@@ -64,33 +65,35 @@ const burbLoader = new GLTFLoader();
         (error) => {
             console.error('Error loading model:', error);
         }); 
+*/
 
 
+// create infinite houses 
+   let group = new THREE.Object3D();
 
-// load in model 
-const loader = new GLTFLoader();
+const houseLoader = new GLTFLoader();
+houseLoader.load("media/house/scene.gltf", function(gltf) {
 
-loader.load(
-  '/media/hatman/scene.gltf', // path to  model
-  (gltf) => {
-    gltf.scene.traverse((node) => { // add shadows 
-        if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-        }
-    });
-    const hatman = gltf.scene;
-    hatman.position.set(0, 0, 0); // position
-    hatman.scale.set(1, 1, 1); // scale 
-    hatman.rotation.y = Math.PI; // rotate 
-    scene.add(hatman);
-  },
-  undefined,
-  (error) => {
-    console.error('Error loading model:', error);
+  const baseHouse = gltf.scene;
+
+  for (let i = 0; i < 15; i += 3) {
+    for (let j = 0; j < 15; j += 3) {
+
+      const house = baseHouse.clone(); // or SkeletonUtils.clone
+      const house2 = baseHouse.clone(); 
+
+      house.position.set(-10, 0, j*5);
+      house2.position.set(10, 0, j*5);
+      house2.rotation.y = Math.PI
+
+
+      group.add(house);
+      group.add(house2);
+    }
   }
-);
-//scene.add( gltf.scene );
+
+  scene.add(group);
+});
 
 
 
