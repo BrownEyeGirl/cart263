@@ -125,14 +125,22 @@ export class PlanetB {
         (gltf) => { 
             const tree1 = gltf.scene;
             tree1.position.set(0, 1.4, 0); // position
-            tree1.scale.set(10, 10, 10); // scale 
+            tree1.scale.set(5, 5, 5); // scale 
             tree1.rotation.y = 0; // rotate 
+            //tree1.rotation.x = Math.PI / 2;
             planetB.add(tree1);
+
+            var tree2 = tree1.clone(); 
+            tree2.position.set(0, 0, 1.4); // position
+            tree2.scale.set(5,5,5);
+            tree2.rotation.x = Math.PI/2; 
+            planetB.add(tree2)
         },
         undefined,
         (error) => {
             console.error('Error loading model:', error);
-        });
+        }); 
+
 
        
 
