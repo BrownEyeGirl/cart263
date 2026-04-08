@@ -14,17 +14,17 @@ const scene = new THREE.Scene();
 const canvas = document.querySelector("canvas#three-ex");
 
 //Ambient Light
-//const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+//const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 //scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-directionalLight.position.set(2, 2, -1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(20, 30, -1);
 scene.add(directionalLight)
 
-const hatmanLight = new THREE.DirectionalLight(0xffff, 0.5);
-directionalLight.position.set(1, 1, -1);
-scene.add(directionalLight)
+const hatmanLight = new THREE.DirectionalLight(0xffff, 1);
+//directionalLight.position.set(-1, -2, -1);
+//scene.add(directionalLight)
 
 
 //Sphere and plane
@@ -34,14 +34,51 @@ material.roughness = 0.7;
 
 const sphere = new THREE.Mesh(geometry, material);
 sphere.position.set(0, 1, 0)
-scene.add(sphere);
+//scene.add(sphere);
+
+
+// Scene creation (houses )
+const burbLoader = new GLTFLoader();
+
+        burbLoader.load(
+        '/media/generic_suburb/scene.gltf', // path to model
+        (gltf) => { 
+          // allow shadows
+          gltf.scene.traverse((node) => { // add shadows 
+          if (node.isMesh) {
+              node.castShadow = true;
+              node.receiveShadow = true;
+          }
+          });
+
+
+            const burb = gltf.scene;
+            burb.position.set(0, -0.5, 0); // position
+            burb.scale.set(90,90,90); // scale 
+            burb.rotation.y = 0; // rotate 
+          //  burb.rotation.x = Math.PI / 3;
+            scene.add(burb);
+
+        },
+        undefined,
+        (error) => {
+            console.error('Error loading model:', error);
+        }); 
+
+
 
 // load in model 
 const loader = new GLTFLoader();
 
 loader.load(
-  '/media/hatman/scene.gltf', // path to your model
+  '/media/hatman/scene.gltf', // path to  model
   (gltf) => {
+    gltf.scene.traverse((node) => { // add shadows 
+        if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+        }
+    });
     const hatman = gltf.scene;
     hatman.position.set(0, 0, 0); // position
     hatman.scale.set(1, 1, 1); // scale 
@@ -104,7 +141,7 @@ plane.receiveShadow = true;
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024; // we can make them more efficient, but needs to be by factors of 2
 directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.radius = 10; // adds bluring effect
+directionalLight.shadow.radius = 1; // adds bluring effect
 
 // spotlight
 const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)

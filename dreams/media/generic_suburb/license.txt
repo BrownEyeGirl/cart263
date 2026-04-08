@@ -1,0 +1,11 @@
+Model Information:
+* title:	Generic suburb (no textures)
+* source:	https://sketchfab.com/3d-models/generic-suburb-no-textures-416baa1df082495ca68e7e942330b0b6
+* author:	nuo2K (https://sketchfab.com/nuo2K)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Generic suburb (no textures)" (https://sketchfab.com/3d-models/generic-suburb-no-textures-416baa1df082495ca68e7e942330b0b6) by nuo2K (https://sketchfab.com/nuo2K) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

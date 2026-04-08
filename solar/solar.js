@@ -54,8 +54,8 @@ controls.maxPolarAngle = Math.PI / 2; // limit tilt
 // add line for context
 // 1. Define points along the x-axis
 const points = [];
-points.push(new THREE.Vector3(0, 0, -100)); // start of line
-points.push(new THREE.Vector3(0, 0, 100));  // end of line
+points.push(new THREE.Vector3(0, 0, -10)); // start of line
+points.push(new THREE.Vector3(0, 0, 10));  // end of line
 
 // 2. Create geometry from points
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
