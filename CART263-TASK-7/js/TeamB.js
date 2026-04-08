@@ -165,6 +165,24 @@ export class PlanetB {
             console.error('Error loading model:', error);
         }); 
 
+        const catLoader = new GLTFLoader();
+
+        catLoader.load(
+        '/models/cat/scene.gltf', // path to model
+        (gltf) => { 
+            const cat1 = gltf.scene;
+            cat1.position.set(0, 1, 1); // position
+            cat1.scale.set(0.02,0.02,0.02); // scale 
+            cat1.rotation.y = 0; // rotate 
+            cat1.rotation.x = Math.PI / 3;
+            planetB.add(cat1);
+
+        },
+        undefined,
+        (error) => {
+            console.error('Error loading model:', error);
+        }); 
+
 
        
 
