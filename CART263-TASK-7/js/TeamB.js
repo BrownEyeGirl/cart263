@@ -137,10 +137,28 @@ export class PlanetB {
             planetB.add(tree2)
 
             var tree3 = tree1.clone(); 
-            tree3.position.set(0, -1.4, 0); // position
+            tree3.position.set(1.4, 0, 0); // position
             tree3.scale.set(5,5,5);
-            tree3.rotation.x = Math.PI; 
+            tree3.rotation.z = -Math.PI/2; 
             planetB.add(tree3)
+
+            var tree4 = tree1.clone(); 
+            tree4.position.set(0, -1.4, 0); // position
+            tree4.scale.set(5,5,5);
+            tree4.rotation.x = Math.PI; 
+            planetB.add(tree4)
+
+            var tree5 = tree1.clone(); 
+            tree5.position.set(0, 0, -1.4); // position
+            tree5.scale.set(5,5,5);
+            tree5.rotation.x = -Math.PI/2; 
+            planetB.add(tree5)
+
+            var tree6 = tree1.clone(); 
+            tree6.position.set(0, -1.4, 0); // position
+            tree6.scale.set(5,5,5);
+            tree6.rotation.z = Math.PI/2; 
+            planetB.add(tree6)
         },
         undefined,
         (error) => {
