@@ -1,4 +1,7 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+
 
 // Planet class for Team B
 export class PlanetB {
@@ -118,20 +121,20 @@ export class PlanetB {
         const loader = new GLTFLoader();
 
         loader.load(
-        '/models/tree.gltf', // path to your model
+        '/models/tree/scene.gltf', // path to model
         (gltf) => {
-            const tree = gltf.scene;
-            tree.position.set(0, 0, 0); // position
-            tree.scale.set(1, 1, 1); // scale 
-            tree.rotation.y = Math.PI; // rotate 
-            scene.add(tree);
+            const tree1 = gltf.scene;
+            tree1.position.set(1, 1, 0); // position
+            tree1.scale.set(10, 10, 10); // scale 
+            tree1.rotation.y = 0; // rotate 
+            planetB.add(tree1);
         },
         undefined,
         (error) => {
             console.error('Error loading model:', error);
-        }
-        );
+        });
 
+       
 
 
         //STEP 4:
