@@ -116,15 +116,15 @@ export class PlanetB {
         //TODO: Load Blender models to populate the planet with multiple props and critters by adding them to the planet group.
         //TODO: Make sure to rotate the models so they are oriented correctly relative to the surface of the planet.
 
-
+        // note: planet radius: 1.5
         // load in model 
         const loader = new GLTFLoader();
 
         loader.load(
         '/models/tree/scene.gltf', // path to model
-        (gltf) => {
+        (gltf) => { 
             const tree1 = gltf.scene;
-            tree1.position.set(1, 1, 0); // position
+            tree1.position.set(0, 1.4, 0); // position
             tree1.scale.set(10, 10, 10); // scale 
             tree1.rotation.y = 0; // rotate 
             planetB.add(tree1);
