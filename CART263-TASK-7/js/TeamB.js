@@ -155,10 +155,10 @@ export class PlanetB {
             planetB.add(tree5)
 
             var tree6 = tree1.clone(); 
-            tree6.position.set(0, -1.4, 0); // position
+            tree6.position.set(-1.4, 0, 0); // position
             tree6.scale.set(5,5,5);
             tree6.rotation.z = Math.PI/2; 
-            planetB.add(tree6)
+            planetB.add(tree6); 
         },
         undefined,
         (error) => {
