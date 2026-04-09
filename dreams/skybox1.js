@@ -5,17 +5,18 @@
  */
 
 
-import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
-import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+import * as THREE from "https://unpkg.com/three@0.182.0/build/three.module.js";
+import { OrbitControls } from "https://unpkg.com/three@0.182.0/examples/jsm/controls/OrbitControls.js";
 
 
+// water
+import { Water } from 'https://unpkg.com/three@0.182.0/examples/jsm/objects/Water.js';
 
 let scene, camera, renderer, controls;
 
-init();
-animate();
+//animate();
 
-function init() {
+
   // Scene
   scene = new THREE.Scene();
 
@@ -28,6 +29,12 @@ function init() {
   );
   camera.position.set(0, 0, 1); // slightly forward
 
+
+
+
+
+
+
   // Renderer
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -35,6 +42,26 @@ function init() {
 
   document.body.appendChild(renderer.domElement);
 
+
+  // wataer
+
+const waterGeometry = new THREE.PlaneGeometry(1000, 1000);
+
+const water = new Water(waterGeometry, {
+  textureWidth: 512,
+  textureHeight: 512,
+  waterNormals: new THREE.TextureLoader().load('https://images.unsplash.com/photo-1476897017502-219c9169bd6f?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2F0ZXIlMjB0ZXh0dXJlfGVufDB8fDB8fHww', function (texture) {
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  }),
+  sunDirection: new THREE.Vector3(),
+  sunColor: 0xffffff,
+  waterColor: 0x001e0f,
+  distortionScale: 3.7,
+  fog: scene.fog !== undefined
+});
+
+water.rotation.x = -Math.PI / 2; // make it horizontal
+scene.add(water);
 
   
   //  Skybox
@@ -63,12 +90,16 @@ scene.fog = new THREE.Fog(0xcccccc, 10, 100);
   controls.rotateSpeed = 0.5;
 
   window.addEventListener("resize", onWindowResize);
-}
+
+
+animate()
 
 function animate() {
   requestAnimationFrame(animate);
 
   controls.update(); // important
+
+  water.material.uniforms['time'].value += 1.0 / 60.0;
 
   renderer.render(scene, camera);
 }
