@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Three + Tone</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+
+    #startButton {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px 40px;
+      font-size: 24px;
+      z-index: 10;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<button id="startButton">START</button>
+
+<!-- ✅ THREE (must load FIRST) -->
+<script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+
+<!-- ✅ OrbitControls that MATCH this version -->
+<script src="https://unpkg.com/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+
+<!-- ✅ Tone.js -->
+<script src="https://unpkg.com/tone@14.7.77/build/Tone.js"></script>
+
+<script>
+// 🔍 Debug check
+console.log("THREE:", typeof THREE); // should say "object"
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+
+// =====================
+// BASIC SETUP
+// =====================
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xffffff);
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+camera.position.set(0, 50, 120);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+// ✅ controls (note: attached to THREE)
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// =====================
+// SIMPLE TEST OBJECT
+// =====================
+
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(),
+  new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+);
+
+scene.add(cube);
+
+// =====================
+// AUDIO BUTTON
+// =====================
+
+let running = false;
+let synth;
+
+const button = document.getElementById("startButton");
+
+button.addEventListener("click", async () => {
+
+  if (running) return;
+
+  await Tone.start();
+  synth = new Tone.Synth().toDestination();
+
+  running = true;
+  button.style.display = "none";
+
+  synth.triggerAttackRelease("C4", "8n");
+
+  setTimeout(() => {
+    running = false;
+    synth.dispose();
+    button.style.display = "block";
+  }, 3000);
+});
+
+// =====================
+// ANIMATE
+// =====================
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  controls.update();
+
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+
+  renderer.render(scene, camera);
+}
+
+animate();
+</script>
+
+</body>
+</html>

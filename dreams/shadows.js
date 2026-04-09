@@ -7,7 +7,10 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
+// for orb
+import { EffectComposer } from 'https://unpkg.com/three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://unpkg.com/three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'https://unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
 
 
 const scene = new THREE.Scene();
@@ -15,12 +18,17 @@ const scene = new THREE.Scene();
 // Canvas
 const canvas = document.querySelector("canvas#three-ex");
 
+// fog 
+const color = 0x000000;
+const density = 0.02;
+scene.fog = new THREE.FogExp2(color, density);
+
 //Ambient Light
 //const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
 //scene.add(ambientLight);
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
 directionalLight.position.set(20, 30, -1);
 scene.add(directionalLight)
 
@@ -39,36 +47,19 @@ sphere.position.set(0, 1, 0)
 //scene.add(sphere);
 
 
-// Scene creation (houses )
-/*const burbLoader = new GLTFLoader();
-
-        burbLoader.load(
-        '/media/generic_suburb/scene.gltf', // path to model
-        (gltf) => { 
-          // allow shadows
-          gltf.scene.traverse((node) => { // add shadows 
-          if (node.isMesh) {
-              node.castShadow = true;
-              node.receiveShadow = true;
-          }
-          });
-
-            const burb = gltf.scene;
-            burb.position.set(0, -0.5, 0); // position
-            burb.scale.set(90,90,90); // scale 
-            burb.rotation.y = 0; // rotate 
-          //  burb.rotation.x = Math.PI / 3;
-            scene.add(burb);
-
-        },
-        undefined,
-        (error) => {
-            console.error('Error loading model:', error);
-        }); 
-*/
+// glowoing square tets
+// GLOWING SQUARE (add only)
+const glowGeo = new THREE.BoxGeometry(2, 2, 3);
+//const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+ const glowMat = new THREE.MeshStandardMaterial({
+  color: 0x22,          // base color (keep darker)
+  emissive: 0x0ff,       // glow color
+  emissiveIntensity: 500    // 🔥 intensity
+});
 
 
-// create infinite houses 
+// create houses 
+let repeat = 15; 
    let group = new THREE.Object3D();
 
 const houseLoader = new GLTFLoader();
@@ -76,8 +67,8 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
 
   const baseHouse = gltf.scene;
 
-  for (let i = 0; i < 15; i += 3) {
-    for (let j = 0; j < 15; j += 3) {
+  for (let i = 0; i < repeat; i += 3) {
+    for (let j = 0; j < repeat; j += 3) {
 
       const house = baseHouse.clone(); // or SkeletonUtils.clone
       const house2 = baseHouse.clone(); 
@@ -86,9 +77,47 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
       house2.position.set(10, 0, j*5);
       house2.rotation.y = Math.PI
 
-
       group.add(house);
       group.add(house2);
+
+      // WINDOW LIGHTS 
+      const glowGeo = new THREE.BoxGeometry(2, 2, 3);
+      const glowGeo2 = new THREE.BoxGeometry(2, 2, 3);
+      //const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const glowMat = new THREE.MeshStandardMaterial({
+        color: 0x22,          // base color (keep darker)
+        emissive: 0x0ff,       // glow color
+        emissiveIntensity: 500    // intensity
+      });
+
+      const glowMat2 = new THREE.MeshStandardMaterial({
+        color: 0x22,          // base color (keep darker)
+        emissive: 0x0ff,       // glow color
+        emissiveIntensity: 500    // intensity
+      });
+      const glowSquareL1 = new THREE.Mesh(glowGeo, glowMat);
+      const glowSquareL2 = new THREE.Mesh(glowGeo2, glowMat2);
+      const glowSquareR1 = new THREE.Mesh(glowGeo, glowMat);
+      const glowSquareR2 = new THREE.Mesh(glowGeo2, glowMat2);
+
+      glowSquareL1.position.set(8, 2, 2.5+j*5); 
+      glowSquareL2.position.set(8, 2, -2.5+j*5); 
+      glowSquareR1.position.set(-8, 2, 2.5+j*5); 
+      glowSquareR2.position.set(-8, 2, -2.5+j*5); 
+
+      scene.add(glowSquareL1);
+      scene.add(glowSquareL2);
+      scene.add(glowSquareR1);
+      scene.add(glowSquareR2); 
+
+
+      // use later for street lights 
+      const glowLight = new THREE.PointLight(0x00ffff, 1, 1.5);
+      glowLight.position.set(8, 2, 2.5);
+
+      scene.add(glowLight);
+
+
     }
   }
 
@@ -96,19 +125,18 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
 });
 
 
-
 //const ground = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 const ground = new THREE.MeshLambertMaterial({
-  color: 0xffff,
+  color: 0xfff,
   blending: THREE.NormalBlending,
  transparent: false
 });
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), ground);
+const plane = new THREE.Mesh(new THREE.PlaneGeometry(8, 150), ground);
 plane.receiveShadow = true; // Receives shadow
 
 scene.add(plane);
 plane.rotation.x = -Math.PI * 0.5;
-plane.position.y = -0.5;
+plane.position.y = 0.1;
 
 
 
@@ -137,6 +165,7 @@ controls.enableDamping = true;
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
+
 renderer.setSize(sizes.width, sizes.height);
 renderer.shadowMap.enabled = true;
 sphere.castShadow = true; // try to activate the least amount possible for browser efficiency 
@@ -145,6 +174,10 @@ directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 1024; // we can make them more efficient, but needs to be by factors of 2
 directionalLight.shadow.mapSize.height = 1024;
 directionalLight.shadow.radius = 1; // adds bluring effect
+
+
+
+
 
 // spotlight
 const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)
@@ -157,7 +190,7 @@ scene.add(spotLight.target)
 //const ambientLight = new THREE.AmbientLight(0xffffff, .25);
 //const directionalLight = new THREE.DirectionalLight(0xffffff, .25);
 
-
+let pulseTime = 0; 
 //ANIMATE
 window.requestAnimationFrame(animate);
 function animate() {
@@ -165,9 +198,22 @@ function animate() {
 
   let x = directionalLight.position.x // move light source
   //x+= Math.random(-1,0);
-  console.log(x)
+  //log(x)
   directionalLight.position.set(x,5, 0)
 
+
+// PULSE ANIMATION (add only)
+pulseTime += 0.02;
+
+// smooth sine wave (0 → 1 → 0)
+const pulse = (Math.sin(pulseTime) + 1) / 2;
+
+// brightness pulse
+glowMat.color.set(0x00ffff); // keep color stable
+glowMat.color.multiplyScalar(5 + pulse * 10);
+
+// slight size pulse
+//glowSquare.scale.set(1 + pulse * 0.2, 1 + pulse * 0.2, 1);
 
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);

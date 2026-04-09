@@ -1,33 +1,18 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
-//import * as Tone from "https://unpkg.com/tone@14.7.77/build/Tone.js";
 
-//import * as Tone from "https://cdn.jsdelivr.net/npm/tone@latest/build/Tone.js";
-//  import * as Tone from "https://cdn.jsdelivr.net/npm/tone@latest/build/Tone.js";
 
-/*nitialize the noise and start
-//var noise = new Tone.Noise("pink").start();
 
-//make an autofilter to shape the noise
-var autoFilter = new Tone.AutoFilter({
-	"frequency" : "8m",
-	"min" : 800,
-	"max" : 15000
-}).connect(Tone.Master);
-
-//connect the noise
-noise.connect(autoFilter);
-//start the autofilter LFO
-autoFilter.start() */
 
 let vel=5; 
-let scaleOrb = 2; 
+let baseFreq = 130; 
+let scaleOrb = 3.5; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
-//let col = [1252FF, 1252FF, 1252FF, 1252FF]
 
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xfff); 
+
+scene.background = new THREE.Color(0x000000); 
 
 
 const camera = new THREE.PerspectiveCamera(
@@ -54,8 +39,8 @@ controls.maxPolarAngle = Math.PI / 2; // limit tilt
 // add line for context
 // 1. Define points along the x-axis
 const points = [];
-points.push(new THREE.Vector3(0, 0, -10)); // start of line
-points.push(new THREE.Vector3(0, 0, 10));  // end of line
+points.push(new THREE.Vector3(10, 0, -100)); // start of line
+points.push(new THREE.Vector3(0, 0, 0));  // end of line
 
 // 2. Create geometry from points
 const geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -86,40 +71,40 @@ const flareTexture = textureLoader.load('https://threejs.org/examples/textures/l
 
 const spriteMaterial = new THREE.SpriteMaterial({
   map: flareTexture,
-  color: 0xffff66,
+  color: 0xfffffff,
   transparent: true,
   blending: THREE.AdditiveBlending
 });
 
 const flare = new THREE.Sprite(spriteMaterial);
-flare.scale.set(20, 20, 1); // size of the glow
+flare.scale.set(20, 20, 100); // size of the glow
 flare.position.copy(sun.position);
 scene.add(flare);
 
-// give the sun some light 
-/*const sunLight = new THREE.PointLight(0xffffff, 1000, 1000);
+// give the sun some light
+const sunLight = new THREE.PointLight(0xfff, 100, 100);
 sunLight.position.set(0, 0, 0);
 sunLight.castShadow = true;        // Enable shadows
 sunLight.falloff = 0;
 sunLight.shadow.mapSize.width = 1024; // Resolution of the shadow map
 sunLight.shadow.mapSize.height = 1024;
-scene.add(sunLight);*/
+scene.add(sunLight);
 
 // ambient light incase if i messed up the sun light
-const ambient = new THREE.AmbientLight(0x404040);
-scene.add(ambient);
+//const ambient = new THREE.AmbientLight(0x404040);
+//scene.add(ambient);
 
 
 // 🌍 Planet data (scaled)
 const planets = [
-  { name: "Mercury", distance: 10, size: 0.5*scaleOrb, speed: 4.15*vel },
-  { name: "Venus", distance: 15, size: 0.9*scaleOrb, speed: 1.62*vel },
-  { name: "Earth", distance: 20, size: 1*scaleOrb, speed: 1.0*vel },
-  { name: "Mars", distance: 25, size: 0.7*scaleOrb, speed: 0.53*vel },
-  { name: "Jupiter", distance: 35, size: 2.5*scaleOrb, speed: 0.084*vel },
-  { name: "Saturn", distance: 45, size: 2.2*scaleOrb, speed: 0.034*vel },
-  { name: "Uranus", distance: 55, size: 1.6*scaleOrb, speed: 0.012*vel },
-  { name: "Neptune", distance: 65, size: 1.5*scaleOrb, speed: 0.006*vel }
+  { name: "Mercury", distance: 10, size: 0.5*scaleOrb, speed: 4.15*vel, freq: 0.240846*baseFreq},
+  { name: "Venus", distance: 15, size: 0.9*scaleOrb, speed: 1.62*vel, freq: 0.615*baseFreq},
+  { name: "Earth", distance: 20, size: 1*scaleOrb, speed: 1.0*vel, freq: 1*baseFreq},
+  { name: "Mars", distance: 25, size: 0.7*scaleOrb, speed: 0.53*vel, freq: 1.881*baseFreq},
+  { name: "Jupiter", distance: 35, size: 2.5*scaleOrb, speed: 0.084*vel, freq: 11.862*baseFreq},
+  { name: "Saturn", distance: 45, size: 2.2*scaleOrb, speed: 0.034*vel, freq: 29.457*baseFreq},
+  { name: "Uranus", distance: 55, size: 1.6*scaleOrb, speed: 0.012*vel, freq: 84.017*baseFreq},
+  { name: "Neptune", distance: 65, size: 1.5*scaleOrb, speed: 0.006*vel, freq: 164.8*baseFreq}
 ];
 
 let iter = 0; 
@@ -142,13 +127,19 @@ const planetT = [
 // Create planets as sprites
 const planetMeshes = planets.map((p, index) => {
     planetTexture = loader.load(planetT[4]); 
-  const material = new THREE.SpriteMaterial({
-    map: planetTexture,
-    transparent: true // keep alpha if the image has it
-  });
+  const material = new THREE.MeshStandardMaterial({
+  color: 0x6a5acd,       // base color
+  metalness: 1.0,        // fully metallic
+  roughness: 0.02,        // smooth surface (low roughness = shinier)
+  emissive: 0x6a5acd,          // glow color
+  emissiveIntensity: 1.5       // strength of glow
+});
 
-  const sprite = new THREE.Sprite(material);
-  sprite.scale.set(p.size * 2, p.size * 2, 1); // scale according to planet size
+const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high segments for smoothness
+  const orb = new THREE.Mesh(geometry, material);
+
+//const sprite = new THREE.Sprite(material);
+  //sprite.scale.set(p.size * 2, p.size * 2, 1); // scale according to planet size
 
   // Optional: add a point light for glow (same as before)
   const light = new THREE.PointLight(colors[index % colors.length], 1000, 1000);
@@ -157,25 +148,52 @@ const planetMeshes = planets.map((p, index) => {
   light.shadow.mapSize.width = 1024;
   light.shadow.mapSize.height = 1024;
 
-  sprite.add(light);
+  //sprite.add(light);
 
   // Random starting angle for orbit
   const angle = Math.random() * Math.PI * 2;
 
-  scene.add(sprite);
+  scene.add(orb);
   iter++; 
 
-  return { ...p, mesh: sprite, angle };
+  return { ...p, mesh: orb, angle };
 });
 
 
 // ⚡ Tone.js Setup 
 
 // Array of different notes for each planet
-const planetNotes = ["C4","D4","E4","F4","G4","A4","B4","C5"]; 
+const planetNotes = [196.22,163.51,130.81,174.41,327.03,209.30,294.32,245.14]; 
 
 // Create a synth for each planet
-const planetSynths = planetMeshes.map(() => new Tone.Synth().toDestination());
+// ANGELIC PLANET SYNTHS
+
+// Create global effects
+const reverb = new Tone.Reverb({
+  decay: 4,       // long tail
+  preDelay: 0.2
+}).toDestination();
+
+const chorus = new Tone.Chorus({
+  frequency: 1.5,
+  delayTime: 3.5,
+  depth: 0.7,
+  type: "sine"
+}).connect(reverb);
+
+// Replace planetSynths with angelic PolySynths
+const planetSynths = planetMeshes.map(() => {
+  return new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: "sine" },  // soft, pure tone
+    envelope: {
+      attack: 0.5,   // smooth fade-in
+      decay: 0.2,
+      sustain: 0.4,
+      release: 2.0   // long release for floating notes
+    },
+    volume: -12
+  }).connect(chorus);
+});
 
 // Track triggers and original colors
 const lineX = 0;           
@@ -184,12 +202,26 @@ const originalColors = planetMeshes.map(p => p.mesh.material.color.clone());
 
 // Function to play sound for one second
 function playNote(synth, note, duration = 1) {
-  synth.triggerAttackRelease(note, duration);
+if (!note || !synth) return;
+  
+  // If duration is 0, set a default
+  if (duration <= 0) duration = "8n";
+
+  if(note > 200) {
+    const volume = new Tone.Volume(-12); // volume in decibels (dB)
+synth.connect(volume);
+volume.toDestination();
+  }
+
+// 3. Play note
+synth.triggerAttackRelease(note, duration);
+  
 }
 
 // 💫 Animation loop
 function animate() {
   requestAnimationFrame(animate);
+
 
   controls.update(); // REQUIRED when damping is on
 
@@ -203,13 +235,14 @@ function animate() {
     // Trigger sound when crossing lineX from left to right
     if (p.mesh.position.x > lineX && !triggered.has(index)) {
       // Play the planet's unique note
-      playNote(planetSynths[index], planetNotes[index], 0.3);
+      
+      playNote(planetSynths[index], planetNotes[index], (1-p.speed)+0.3);
 
       // Temporarily change color
-      p.mesh.material.map = loader.load('media/mercury_pixelated.png');
+      p.mesh.material.map = loader.load('https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png');
       setTimeout(() => {
        // p.mesh.material.color.map = loader.load('media/mercury_pixelated.png');
-      }, 100);
+      }, p.speed/2);
 
       triggered.add(index);  // mark as triggered
     }

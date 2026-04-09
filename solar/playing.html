@@ -40,11 +40,18 @@
         synth.triggerAttackRelease("C4", "0.5");
 
         playBtn.disabled = true;
+
+        //displayPlanets(); 
+
+
         setTimeout(() => {
           playBtn.disabled = false;
           statusEl.textContent = "Status: ready";
-        }, 600);
+        }, 6000);
       });
+
+
     </script>
+
   </body>
 </html>
