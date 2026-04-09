@@ -27,10 +27,9 @@ let scene, camera, renderer, controls;
     0.1,
     100000
   );
-  camera.position.set(0, 0, 1); // slightly forward
+  camera.position.set(0, 4, 1); // slightly forward
 
-
-
+  camera.layers.enable(1); // Main camera sees 0 and 1
 
 
 
@@ -39,7 +38,7 @@ let scene, camera, renderer, controls;
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.NoToneMapping; // try to make corners invisible
-
+renderer.shadowMap.enabled = true;
   document.body.appendChild(renderer.domElement);
 
 
@@ -80,7 +79,7 @@ scene.add(water);
   ]);
   
   scene.background = skyboxTexture;
-scene.fog = new THREE.Fog(0xcccccc, 10, 100);
+//scene.fog = new THREE.Fog(0xcccccc, 10, 100);
   //document.body.style.filter = 'saturate(0.3)';
 
   //  Controls 
@@ -91,6 +90,24 @@ scene.fog = new THREE.Fog(0xcccccc, 10, 100);
 
   window.addEventListener("resize", onWindowResize);
 
+// Load texture from URL
+const texture = new THREE.TextureLoader().load(
+  'https://cdn.creazilla.com/cliparts/7863723/silhouette-of-man-standing-and-facing-forward-clipart-md.png'
+);
+
+// Create sprite material
+const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
+
+
+// Create sprite (2D object)
+const sprite = new THREE.Sprite(spriteMaterial);
+sprite.scale.set(2, 5, 2); // size
+sprite.position.set(1, 1, 1);
+sprite.castShadow = false;
+sprite.receiveShadow = false;
+sprite.layers.set(1); // put on a separate layer
+scene.add(sprite);
+
 
 animate()
 
@@ -99,7 +116,7 @@ function animate() {
 
   controls.update(); // important
 
-  water.material.uniforms['time'].value += 1.0 / 60.0;
+  water.material.uniforms['time'].value += 0.3/ 60.0;
 
   renderer.render(scene, camera);
 }
