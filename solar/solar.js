@@ -12,7 +12,7 @@ let vel=2;
 const velSlider = document.createElement("input");
 velSlider.type = "range"; // slide 
 velSlider.min = 1;
-velSlider.max = 100;
+velSlider.max = 40;
 velSlider.value = 2;
 
 // style it (optional)
@@ -207,10 +207,22 @@ const planetT = [
 
 // Create planets as sprites
 const planetMeshes = planets.map((p, index) => {
+    /**
+     * calculate frequencies 
+     * log-frequency mapping -> fsound​ = f0​⋅2^(klog2​(r)) = f0​⋅rk
+     * where: 
+     * f0 = 200hz (neutral frequency to build around)
+     * k = 0.5 (compression factor so everything fits comfortably, common in sonification)
+     * */
+  
+      p.freq = 200*Math.sqrt(p.speed) // normalize into pleasant hz (important!!)
+
+
     planetTexture = loader.load(planetT[index]); 
     planetTexture.wrapS = THREE.ClampToEdgeWrapping;
     planetTexture.wrapT = THREE.ClampToEdgeWrapping;
     planetTexture.repeat.set(1, 1);
+
 
 
   const material = new THREE.MeshStandardMaterial({
@@ -270,12 +282,16 @@ const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high seg
 // ⚡ Tone.js Setup 
 
 // Array of different notes for each planet
-const planetNotes = [196.22,163.51,130.81,174.41,327.03,209.30,294.32,245.14]; 
+//const planetNotes = [196.22,163.51,130.81,174.41,327.03,209.30,294.32,245.14]; 
 
 // Create a synth for each planet
 // ANGELIC PLANET SYNTHS
 
 // Create global effects
+
+const highGain = new Tone.Gain(0.6);
+const lowGain = new Tone.Gain(1);
+
 const reverb = new Tone.Reverb({
   decay: 4,       // long tail
   preDelay: 0.2
@@ -290,44 +306,57 @@ const chorus = new Tone.Chorus({
 
 // Replace planetSynths with angelic PolySynths
 const planetSynths = planetMeshes.map(() => {
-  return new Tone.PolySynth(Tone.Synth, {
-    oscillator: { type: "sine" },  // soft, pure tone
+  const synth = new Tone.PolySynth(Tone.Synth, {
+    oscillator: { type: "sine" },
     envelope: {
-      attack: 0.5,   // smooth fade-in
+      attack: 0.5,
       decay: 0.2,
       sustain: 0.4,
-      release: 2.0   // long release for floating notes
+      release: 2.0, 
+      maxPolyphony: 2 // IMPORTANT
     },
     volume: -12
-  }).connect(chorus);
+  });
+
+  synth.connect(chorus);
+  return synth;
 });
+
+chorus.connect(lowGain);
+chorus.connect(highGain);
+
+
+// Function to play sound for one second
+function playNote(synth, note, duration = "8n") {
+  if (!note || !synth) return;
+  if (duration <= 0) duration = "8n";
+
+  if (note > 100) {
+    highGain.gain.value = 0.3;
+    lowGain.gain.value = 1;
+  } else {
+    highGain.gain.value = 1;
+    lowGain.gain.value = 0.5;
+  }
+
+
+  synth.triggerAttackRelease(note, duration);
+}
+
+
 
 const noise = new Tone.Noise("white").toDestination(); // ambient noise 
 noise.volume.value = -70; // shhh
 noise.start();
+
+
 
 // Track triggers and original colors
 const lineX = 0;           
 const triggered = new Set(); // track which planets already triggered
 const originalColors = planetMeshes.map(p => p.mesh.material.color.clone());
 
-// Function to play sound for one second
-function playNote(synth, note, duration = 1) {
-if (!note || !synth) return;
-  
-  // If duration is 0, set a default
-  if (duration <= 0) duration = "8n";
 
-  if(note > 200) {
-    const volume = new Tone.Volume(-12); // volume in decibels (dB)
-synth.connect(volume);
-volume.toDestination();
-  }
-
-// 3. Play note
-synth.triggerAttackRelease(note, duration);
-  
-}
 
 // 💫 Animation loop
 function animate(time) {
@@ -365,8 +394,7 @@ function animate(time) {
     // Trigger sound when crossing lineX from left to right
     if (p.mesh.position.x > lineX && !triggered.has(index)) {
       // Play the planet's unique note
-      
-      playNote(planetSynths[index], planetNotes[index], (1-p.speed*vel)+0.3);
+      playNote(planetSynths[index], p.freq, (1-p.speed*vel)+0.3);
 
       // Temporarily change color
      // p.mesh.material.map = loader.load('https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png');
