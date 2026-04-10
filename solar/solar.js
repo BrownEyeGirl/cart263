@@ -1,10 +1,14 @@
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// lense flare 
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 
 
 
 
-let vel=5; 
+
+
+let vel=2; 
 let baseFreq = 130; 
 let scaleOrb = 3.5; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
@@ -25,9 +29,18 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 50, 100);
 camera.position.z = 120;
 
+
+// ~LENS FLARE ~~~
+
+
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+
+
+
 
 // add controls 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -36,23 +49,39 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.05;
 controls.maxPolarAngle = Math.PI / 2; // limit tilt
 
-// add line for context
-// 1. Define points along the x-axis
-const points = [];
-points.push(new THREE.Vector3(10, 0, -100)); // start of line
-points.push(new THREE.Vector3(0, 0, 0));  // end of line
 
-// 2. Create geometry from points
-const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-// 3. Create material for the line
-const material = new THREE.LineBasicMaterial({ color: 0xff0000 }); // red
+// LINE FOR CONTEXT
+const start = new THREE.Vector3(10, 0, -100); // vector points will randomize around 
+const end = new THREE.Vector3(0, 0, 0);
+const points = []; // points array 
+for (let i = 0; i < 100; i++) { // generate 100 points 
+  const t = Math.random(); // rantom position of points 
+  const pointOnLine = new THREE.Vector3().lerpVectors(start, end, t); // lerp? idk 
+  const direction = new THREE.Vector3().subVectors(end, start).normalize(); // 
 
-// 4. Create the line mesh
-const line = new THREE.Line(geometry, material);
+  let randomVec = new THREE.Vector3( // random perp vector from main vector 
+    Math.random() - 0.5,
+    Math.random() - 0.5,
+    Math.random() - 0.5
+  );
+  const perpendicular = new THREE.Vector3() // make vector perp from the 
+    .crossVectors(direction, randomVec)
+    .normalize();
+  const distance =  Math.random() * 8; // rand dist from line 
+  const finalPoint = pointOnLine.clone().add(perpendicular.multiplyScalar(distance)); // place the final point 
+  points.push(finalPoint); // add the point to list of points 
+}
 
-// 5. Add to scene
-scene.add(line);
+const geometryP = new THREE.BufferGeometry().setFromPoints(points);
+const materialP = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
+const particles = new THREE.Points(geometryP, materialP);
+const positions = geometryP.attributes.position; // Store original positions
+const originalPositions = positions.array.slice(); // copy
+scene.add(particles);
+
+
+
 
 
 const sunGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -195,6 +224,10 @@ const planetSynths = planetMeshes.map(() => {
   }).connect(chorus);
 });
 
+const noise = new Tone.Noise("white").toDestination(); // ambient noise 
+noise.volume.value = -70; // shhh
+noise.start();
+
 // Track triggers and original colors
 const lineX = 0;           
 const triggered = new Set(); // track which planets already triggered
@@ -219,8 +252,27 @@ synth.triggerAttackRelease(note, duration);
 }
 
 // 💫 Animation loop
-function animate() {
+function animate(time) {
   requestAnimationFrame(animate);
+
+
+  // PARTICLES LINE 
+    for (let i = 0; i < positions.count; i++) {
+    const i3 = i * 3;
+
+    //const x = originalPositions[i3];
+    const y = originalPositions[i3 + 1];
+    //const z = originalPositions[i3 + 2];
+
+    // floating motion
+    const offset = Math.sin(time * 0.003 + i);
+    positions.array[i3 + 1] = y + offset; // move Y
+  }
+
+  positions.needsUpdate = true;
+
+
+
 
 
   controls.update(); // REQUIRED when damping is on
