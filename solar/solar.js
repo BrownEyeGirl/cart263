@@ -7,8 +7,47 @@ import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 
 
 
-
+// SLIDER VALUES
 let vel=2; 
+const velSlider = document.createElement("input");
+velSlider.type = "range"; // slide 
+velSlider.min = 1;
+velSlider.max = 100;
+velSlider.value = 2;
+
+// style it (optional)
+velSlider.style.position = "absolute";
+velSlider.style.top = "20px";
+velSlider.style.left = "20px";
+velSlider.style.zIndex = "10";
+velSlider.style.color = "pink"; 
+velSlider.classList.add("vel-slider");
+
+// add label 
+const container = document.createElement("div");
+container.style.position = "absolute";
+container.style.top = "20px";
+container.style.left = "20px";
+container.style.color = "white";
+container.style.fontFamily = "sans-serif";
+
+const label = document.createElement("div");
+label.textContent = "Velocity";
+
+container.appendChild(label);
+container.appendChild(velSlider);
+document.body.appendChild(container);
+//document.body.appendChild(velSlider);
+
+// listen for chaanges 
+velSlider.addEventListener("input", (e) => {
+  vel = e.target.value;
+  console.log(vel);
+});
+
+
+
+
 let baseFreq = 130; 
 let scaleOrb = 3.5; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
@@ -16,7 +55,7 @@ const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xff
 
 const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x000000); 
+scene.background = new THREE.Color(0xfff); 
 
 
 const camera = new THREE.PerspectiveCamera(
@@ -31,14 +70,27 @@ camera.position.z = 120;
 
 
 // ~LENS FLARE ~~~
+// const flareTextures = [
+//   { textureUrl: "https://static.vecteezy.com/system/resources/thumbnails/016/622/342/small/transparent-sunlight-special-lens-flare-light-effect-isolated-background-png.png", size: 2000, dist: 0 },
+//   { textureUrl: "https://static.vecteezy.com/system/resources/thumbnails/016/622/342/small/transparent-sunlight-special-lens-flare-light-effect-isolated-background-png.png", size: 2500, dist: 0.1 },
+//   { textureUrl: "https://static.vecteezy.com/system/resources/thumbnails/016/622/342/small/transparent-sunlight-special-lens-flare-light-effect-isolated-background-png.png", size: 1250, dist: 0.4 },
+//   { textureUrl: "https://static.vecteezy.com/system/resources/thumbnails/016/622/342/small/transparent-sunlight-special-lens-flare-light-effect-isolated-background-png.png", size: 3750, dist: 1.8 },
+// ];
+
+// const light = new THREE.PointLight( 0xffffff, 1.5, 2000 );
+// const lensflare = new Lensflare();
+// const textureLoader2 = new THREE.TextureLoader();
+
+// lensflare.addElement( new LensflareElement( textureLoader2.load(flareTextures[0].textureUrl), 512, 0 ) );
+// lensflare.addElement( new LensflareElement( flareTextures[0].textureURL, 512, 0 ) );
+// lensflare.addElement( new LensflareElement( flareTextures[0].textureURL, 60, 0.6 ) );
+// light.add( lensflare );
 
 
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
-
 
 
 
@@ -52,11 +104,11 @@ controls.maxPolarAngle = Math.PI / 2; // limit tilt
 
 
 // LINE FOR CONTEXT
-const start = new THREE.Vector3(10, 0, -100); // vector points will randomize around 
+const start = new THREE.Vector3(10, 0, -200); // vector points will randomize around 
 const end = new THREE.Vector3(0, 0, 0);
 const points = []; // points array 
-for (let i = 0; i < 100; i++) { // generate 100 points 
-  const t = Math.random(); // rantom position of points 
+for (let i = 0; i < 200; i++) { // generate 100 points 
+  const t = Math.random();//1-i/100;  // rantom position of points 
   const pointOnLine = new THREE.Vector3().lerpVectors(start, end, t); // lerp? idk 
   const direction = new THREE.Vector3().subVectors(end, start).normalize(); // 
 
@@ -68,13 +120,13 @@ for (let i = 0; i < 100; i++) { // generate 100 points
   const perpendicular = new THREE.Vector3() // make vector perp from the 
     .crossVectors(direction, randomVec)
     .normalize();
-  const distance =  Math.random() * 8; // rand dist from line 
+  const distance =  Math.random() +(i/10); // rand dist from line 
   const finalPoint = pointOnLine.clone().add(perpendicular.multiplyScalar(distance)); // place the final point 
   points.push(finalPoint); // add the point to list of points 
 }
 
 const geometryP = new THREE.BufferGeometry().setFromPoints(points);
-const materialP = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5 });
+const materialP = new THREE.PointsMaterial({ color: 0xFFC000, size: 0.1 });
 const particles = new THREE.Points(geometryP, materialP);
 const positions = geometryP.attributes.position; // Store original positions
 const originalPositions = positions.array.slice(); // copy
@@ -83,7 +135,7 @@ scene.add(particles);
 
 
 
-
+// SUN 
 const sunGeometry = new THREE.SphereGeometry(1, 32, 32);
 const sunMaterial = new THREE.MeshStandardMaterial({
   color: 0xffff00,        // base color
@@ -111,7 +163,7 @@ flare.position.copy(sun.position);
 scene.add(flare);
 
 // give the sun some light
-const sunLight = new THREE.PointLight(0xfff, 100, 100);
+const sunLight = new THREE.PointLight(0xffffff, 1000, 100);
 sunLight.position.set(0, 0, 0);
 sunLight.castShadow = true;        // Enable shadows
 sunLight.falloff = 0;
@@ -120,20 +172,20 @@ sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
 // ambient light incase if i messed up the sun light
-//const ambient = new THREE.AmbientLight(0x404040);
-//scene.add(ambient);
+const ambient = new THREE.AmbientLight(0xffff);
+scene.add(ambient);
 
 
 // 🌍 Planet data (scaled)
 const planets = [
-  { name: "Mercury", distance: 10, size: 0.5*scaleOrb, speed: 4.15*vel, freq: 0.240846*baseFreq},
-  { name: "Venus", distance: 15, size: 0.9*scaleOrb, speed: 1.62*vel, freq: 0.615*baseFreq},
-  { name: "Earth", distance: 20, size: 1*scaleOrb, speed: 1.0*vel, freq: 1*baseFreq},
-  { name: "Mars", distance: 25, size: 0.7*scaleOrb, speed: 0.53*vel, freq: 1.881*baseFreq},
-  { name: "Jupiter", distance: 35, size: 2.5*scaleOrb, speed: 0.084*vel, freq: 11.862*baseFreq},
-  { name: "Saturn", distance: 45, size: 2.2*scaleOrb, speed: 0.034*vel, freq: 29.457*baseFreq},
-  { name: "Uranus", distance: 55, size: 1.6*scaleOrb, speed: 0.012*vel, freq: 84.017*baseFreq},
-  { name: "Neptune", distance: 65, size: 1.5*scaleOrb, speed: 0.006*vel, freq: 164.8*baseFreq}
+  { name: "Mercury", distance: 10, size: 0.5*scaleOrb, speed: 4.15, freq: 0.240846*baseFreq},
+  { name: "Venus", distance: 15, size: 0.9*scaleOrb, speed: 1.62, freq: 0.615*baseFreq},
+  { name: "Earth", distance: 20, size: 1*scaleOrb, speed: 1.0, freq: 1*baseFreq},
+  { name: "Mars", distance: 25, size: 0.7*scaleOrb, speed: 0.53, freq: 1.881*baseFreq},
+  { name: "Jupiter", distance: 35, size: 2.5*scaleOrb, speed: 0.084, freq: 11.862*baseFreq},
+  { name: "Saturn", distance: 45, size: 2.2*scaleOrb, speed: 0.034, freq: 29.457*baseFreq},
+  { name: "Uranus", distance: 55, size: 1.6*scaleOrb, speed: 0.012, freq: 84.017*baseFreq},
+  { name: "Neptune", distance: 65, size: 1.5*scaleOrb, speed: 0.006, freq: 164.8*baseFreq}
 ];
 
 let iter = 0; 
@@ -142,34 +194,60 @@ let iter = 0;
 const loader = new THREE.TextureLoader();
 let planetTexture = loader.load('https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png');
 const planetT = [
-    'media/mercury_pixelated.png', // mercury 
-    'media/mercury_pixelated.png', // venus
-    'media/earth_pixelated1.png', // earth
-    'media/mercury_pixelated.png', // mars 
-    'https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png', // jupiter 
-    'media/mercury_pixelated.png', // saturn 
-    'media/mercury_pixelated.png', // uranus 
-    'media/mercury_pixelated.png' // neptune 
+    'media/mercury_wrap.jpg', // mercury 
+    'media/venus_wrap.jpg', // venus
+    'media/earth_wrap.jpg', // earth
+    'media/mars_wrap.jpg', // mars 
+    'media/jupiter_wrap.avif', // jupiter 
+    'media/saturn_wrap.jpg', // saturn 
+    'media/uranus_wrap.jpg', // uranus 
+    'media/neptune_wrap.jpeg' // neptune 
 ]
 
 
 // Create planets as sprites
 const planetMeshes = planets.map((p, index) => {
-    planetTexture = loader.load(planetT[4]); 
+    planetTexture = loader.load(planetT[index]); 
+    planetTexture.wrapS = THREE.ClampToEdgeWrapping;
+    planetTexture.wrapT = THREE.ClampToEdgeWrapping;
+    planetTexture.repeat.set(1, 1);
+
+
   const material = new THREE.MeshStandardMaterial({
   color: 0x6a5acd,       // base color
   metalness: 1.0,        // fully metallic
   roughness: 0.02,        // smooth surface (low roughness = shinier)
   emissive: 0x6a5acd,          // glow color
-  emissiveIntensity: 1.5       // strength of glow
+  emissiveIntensity: 0.6      // strength of glow
+});
+
+
+
+//const sprite = new THREE.Sprite(planetTexture);
+// const sprite = new THREE.Sprite(
+//   new THREE.MeshStandardMaterial({
+//     map: planetTexture,
+//     blending: THREE.AdditiveBlending,
+//     transparent: true,
+//     depthWrite: false
+//   })
+// );
+//   sprite.scale.set(p.size * 2, p.size * 2, 1); // scale according to planet size
+
+const material1 = new THREE.MeshStandardMaterial({
+  map: planetTexture,
+  //emissive: 0x6a5acd,          // glow color
+  //emissiveIntensity: 0.6,      // strength of glow
+  roughness: 1,
+  metalness: 0
 });
 
 const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high segments for smoothness
-  const orb = new THREE.Mesh(geometry, material);
+  const orb = new THREE.Mesh(geometry, material1);
 
-//const sprite = new THREE.Sprite(material);
-  //sprite.scale.set(p.size * 2, p.size * 2, 1); // scale according to planet size
 
+  // attach to orb
+//orb.add(sprite);
   // Optional: add a point light for glow (same as before)
   const light = new THREE.PointLight(colors[index % colors.length], 1000, 1000);
   light.position.set(0, 0, 0);
@@ -278,7 +356,7 @@ function animate(time) {
   controls.update(); // REQUIRED when damping is on
 
   planetMeshes.forEach((p, index) => {
-    p.angle += p.speed * 0.01; // speed multiplier
+    p.angle += p.speed*vel * 0.01; // speed multiplier
 
     // Update planet position
     p.mesh.position.x = Math.cos(p.angle) * p.distance;
@@ -288,13 +366,13 @@ function animate(time) {
     if (p.mesh.position.x > lineX && !triggered.has(index)) {
       // Play the planet's unique note
       
-      playNote(planetSynths[index], planetNotes[index], (1-p.speed)+0.3);
+      playNote(planetSynths[index], planetNotes[index], (1-p.speed*vel)+0.3);
 
       // Temporarily change color
-      p.mesh.material.map = loader.load('https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png');
-      setTimeout(() => {
+     // p.mesh.material.map = loader.load('https://c-p.rmcdn1.net/5e8cc305398b440084d433ac/1901283/upload-5d6b183c-94df-45d9-86bb-a4aea76e0462.png');
+      //setTimeout(() => {
        // p.mesh.material.color.map = loader.load('media/mercury_pixelated.png');
-      }, p.speed/2);
+     /// }, p.speed/2);
 
       triggered.add(index);  // mark as triggered
     }
@@ -302,7 +380,7 @@ function animate(time) {
     // Reset trigger if planet moves back past the line
     if (p.mesh.position.x < lineX && triggered.has(index)) {
       triggered.delete(index);
-      p.mesh.material.map = loader.load('media/earth_pixelated.png');
+     // p.mesh.material.map = loader.load('media/earth_pixelated.png');
     }
   });
 
