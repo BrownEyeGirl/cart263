@@ -3,8 +3,23 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 // lense flare 
 import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
 
+// afterimage 
+import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+/*import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { AfterimagePass } from 'three/addons/postprocessing/AfterimagePass.js'; */
+import { AfterimagePass } from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/jsm/postprocessing/AfterimagePass.js";
+import { EffectComposer } from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/jsm/postprocessing/RenderPass.js";
 
+// afterimage
+let afterimagePass;
+let composer
+const params = {
 
+  enable: true
+
+};
 
 
 // SLIDER VALUES
@@ -12,7 +27,7 @@ let vel=2;
 const velSlider = document.createElement("input");
 velSlider.type = "range"; // slide 
 velSlider.min = 1;
-velSlider.max = 40;
+velSlider.max = 25;
 velSlider.value = 2;
 
 // style it (optional)
@@ -47,15 +62,15 @@ velSlider.addEventListener("input", (e) => {
 
 
 
-
+// vars 
 let baseFreq = 130; 
-let scaleOrb = 3.5; 
+let scaleOrb = 3; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
 
 
 const scene = new THREE.Scene();
-
-scene.background = new THREE.Color(0xfff); 
+scene.fog = new THREE.Fog( 0x000000, 1, 1000 ); // afterimage 
+scene.background = new THREE.Color(0x0000); 
 
 
 const camera = new THREE.PerspectiveCamera(
@@ -91,6 +106,21 @@ camera.position.z = 120;
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
+
+// afterimage
+composer = new EffectComposer( renderer );
+				composer.addPass( new RenderPass( scene, camera ) );
+
+				afterimagePass = new AfterimagePass();
+        //afterimagePass.uniforms["damp"].value = 0.9;
+				composer.addPass( afterimagePass );
+
+
+				//window.addEventListener( 'resize', onWindowResize );
+
+				const gui = new GUI( { title: 'Damp setting' } );
+       gui.add(afterimagePass.uniforms.damp, "value", 0, 1).name("damp");
+				gui.add( params, 'enable' );
 
 
 
@@ -163,7 +193,7 @@ flare.position.copy(sun.position);
 scene.add(flare);
 
 // give the sun some light
-const sunLight = new THREE.PointLight(0xffffff, 1000, 100);
+const sunLight = new THREE.PointLight(0xffffff, 0, 0);
 sunLight.position.set(0, 0, 0);
 sunLight.castShadow = true;        // Enable shadows
 sunLight.falloff = 0;
@@ -172,7 +202,7 @@ sunLight.shadow.mapSize.height = 1024;
 scene.add(sunLight);
 
 // ambient light incase if i messed up the sun light
-const ambient = new THREE.AmbientLight(0xffff);
+const ambient = new THREE.AmbientLight(0xffffff);
 scene.add(ambient);
 
 
@@ -412,14 +442,32 @@ function animate(time) {
     }
   });
 
-  renderer.render(scene, camera);
+  // afterimage
+  afterimagePass.enabled = params.enable;
+  composer.render();
+
+  //renderer.render(scene, camera);
 }
 
 animate();
 
 // Resize handling
-window.addEventListener('resize', () => {
+/*window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+});*/
+// adapted for after image 
+window.addEventListener('resize', () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  renderer.setSize(width, height);
+  composer.setSize(width, height); // 🔥 REQUIRED
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
 });
+
+
+
