@@ -26,6 +26,13 @@ import { FilmPass } from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/js
 import { RGBShiftShader } from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/jsm/shaders/RGBShiftShader.js";
 import * as GodRaysShader from "https://cdn.jsdelivr.net/npm/three@0.144.0/examples/jsm/shaders/GodRaysShader.js";
 
+// reflective surfaces 
+import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/RGBELoader.js';
+
+
+
+
+
 // post
 const RadialBlurShader = {
   uniforms: {
@@ -112,7 +119,7 @@ velSlider.addEventListener("input", (e) => {
 
 // vars 
 let baseFreq = 130; 
-let scaleOrb = 3; 
+let scaleOrb = 5; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
 
 
@@ -168,34 +175,48 @@ controls.maxPolarAngle = Math.PI / 2; // limit tilt
 // 				scene.add( hemiLight );
 
 // LINE FOR CONTEXT
-const start = new THREE.Vector3(10, 0, -200); // vector points will randomize around 
+const start = new THREE.Vector3(10, 0, -200);
 const end = new THREE.Vector3(0, 0, 0);
-const points = []; // points array 
-for (let i = 0; i < 200; i++) { // generate 100 points 
-  const t = Math.random();//1-i/100;  // rantom position of points 
-  const pointOnLine = new THREE.Vector3().lerpVectors(start, end, t); // lerp? idk 
-  const direction = new THREE.Vector3().subVectors(end, start).normalize(); // 
 
-  let randomVec = new THREE.Vector3( // random perp vector from main vector 
-    Math.random() - 0.5,
-    Math.random() - 0.5,
-    Math.random() - 0.5
-  );
-  const perpendicular = new THREE.Vector3() // make vector perp from the 
-    .crossVectors(direction, randomVec)
-    .normalize();
-  const distance =  Math.random() +(i/10); // rand dist from line 
-  const finalPoint = pointOnLine.clone().add(perpendicular.multiplyScalar(distance)); // place the final point 
-  points.push(finalPoint); // add the point to list of points 
+const points = [];
+const numPoints = 200;
+
+for (let i = 0; i < numPoints; i++) {
+  const t = i / (numPoints - 1); // evenly spaced (0 → 1)
+
+  const point = new THREE.Vector3().lerpVectors(start, end, t);
+
+  points.push(point);
 }
 
 const geometryP = new THREE.BufferGeometry().setFromPoints(points);
-const materialP = new THREE.PointsMaterial({ color: 0xFFC000, size: 0.1 });
-const particles = new THREE.Points(geometryP, materialP);
+const materialP = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+const pointMap = new THREE.Points(geometryP, materialP);
 const positions = geometryP.attributes.position; // Store original positions
 const originalPositions = positions.array.slice(); // copy
-scene.add(particles);
+scene.add(pointMap);
 
+
+// stars
+const stars = [];
+const spread = 200; // how far particles spread from center
+
+for (let i = 0; i < 200; i++) {
+  const star = new THREE.Vector3(
+    (Math.random() - 0.5) * spread,
+    (Math.random() - 0.5) * spread,
+    (Math.random() - 0.5) * spread
+  );
+
+  stars.push(star);
+}
+
+const geometryS = new THREE.BufferGeometry().setFromPoints(stars);
+const materialS = new THREE.PointsMaterial({ color: 0xFFC000, size: 0.1 });
+const starsMap = new THREE.Points(geometryS, materialS);
+const positionsS = geometryP.attributes.position; // Store original positions
+const originalPositionsS = positions.array.slice(); // copy
+scene.add(starsMap);
 
 
 
@@ -239,17 +260,18 @@ scene.add(sunLight);
 const ambient = new THREE.AmbientLight(0xffffff);
 scene.add(ambient);
 
+let spacing = 3; 
 
 // 🌍 Planet data (scaled)
 const planets = [
-  { name: "Mercury", distance: 10, size: 0.5*scaleOrb, speed: 4.15, freq: 0.240846*baseFreq},
-  { name: "Venus", distance: 15, size: 0.9*scaleOrb, speed: 1.62, freq: 0.615*baseFreq},
-  { name: "Earth", distance: 20, size: 1*scaleOrb, speed: 1.0, freq: 1*baseFreq},
-  { name: "Mars", distance: 25, size: 0.7*scaleOrb, speed: 0.53, freq: 1.881*baseFreq},
-  { name: "Jupiter", distance: 35, size: 2.5*scaleOrb, speed: 0.084, freq: 11.862*baseFreq},
-  { name: "Saturn", distance: 45, size: 2.2*scaleOrb, speed: 0.034, freq: 29.457*baseFreq},
-  { name: "Uranus", distance: 55, size: 1.6*scaleOrb, speed: 0.012, freq: 84.017*baseFreq},
-  { name: "Neptune", distance: 65, size: 1.5*scaleOrb, speed: 0.006, freq: 164.8*baseFreq}
+  { name: "Mercury", distance: 10*spacing, size: 0.5*scaleOrb, speed: 4.15, freq: 0.240846*baseFreq},
+  { name: "Venus", distance: 15*spacing, size: 0.9*scaleOrb, speed: 1.62, freq: 0.615*baseFreq},
+  { name: "Earth", distance: 20*spacing, size: 1*scaleOrb, speed: 1.0, freq: 1*baseFreq},
+  { name: "Mars", distance: 25*spacing, size: 0.7*scaleOrb, speed: 0.53, freq: 1.881*baseFreq},
+  { name: "Jupiter", distance: 35*spacing, size: 2.5*scaleOrb, speed: 0.084, freq: 11.862*baseFreq},
+  { name: "Saturn", distance: 45*spacing, size: 2.2*scaleOrb, speed: 0.034, freq: 29.457*baseFreq},
+  { name: "Uranus", distance: 55*spacing, size: 1.6*scaleOrb, speed: 0.012, freq: 84.017*baseFreq},
+  { name: "Neptune", distance: 65*spacing, size: 1.5*scaleOrb, speed: 0.006, freq: 164.8*baseFreq}
 ];
 
 let iter = 0; 
@@ -267,6 +289,16 @@ const planetT = [
     'media/uranus_wrap.jpg', // uranus 
     'media/neptune_wrap.jpeg' // neptune 
 ]
+
+// create refleuctive material 
+const loaderEnviron = new RGBELoader();
+
+loaderEnviron.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr', (texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+
+  scene.environment = texture; // reflections
+  scene.background = texture;  // visible skybox
+});
 
 
 // Create planets as sprites
@@ -289,13 +321,17 @@ const planetMeshes = planets.map((p, index) => {
 
 
 
-  const material = new THREE.MeshStandardMaterial({
-  color: 0x6a5acd,       // base color
-  metalness: 1.0,        // fully metallic
-  roughness: 0.02,        // smooth surface (low roughness = shinier)
-  emissive: 0x6a5acd,          // glow color
-  emissiveIntensity: 0.6      // strength of glow
+  const material = new THREE.MeshPhysicalMaterial({
+  map: planetTexture,  // your image stays
+  metalness: 0.5,   // mix between texture & reflection
+  roughness: 0.2,   // slight blur
+  clearcoat: 1,
+  opacity: 0.8, // 50% translucent
+  transparent: true, 
+  clearcoatRoughness: 0,
+  envMapIntensity: 1
 });
+
 
 
 
@@ -319,7 +355,7 @@ const material1 = new THREE.MeshStandardMaterial({
 });
 
 const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high segments for smoothness
-  const orb = new THREE.Mesh(geometry, material1);
+  const orb = new THREE.Mesh(geometry, material);
 
 
   // attach to orb
@@ -462,14 +498,14 @@ const bloom = new UnrealBloomPass(
   0.03   // threshold
 );
 
-composer.addPass(bloom);
+//composer.addPass(bloom);
 
 const film = new FilmPass(0.05, 0.025, 648, false);
-composer.addPass(film);
+//composer.addPass(film);
 
 const rgbShift = new ShaderPass(RGBShiftShader);
 rgbShift.uniforms.amount.value = 0.0015;
-composer.addPass(rgbShift);
+//composer.addPass(rgbShift);
 
 const GravityShader = {
   uniforms: {
@@ -506,7 +542,7 @@ const GravityShader = {
   `
 };
 const gravityPass = new ShaderPass(GravityShader);
-composer.addPass(gravityPass);
+//composer.addPass(gravityPass);
 
 const sunScreen = new THREE.Vector3();
 
