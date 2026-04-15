@@ -120,6 +120,7 @@ velSlider.addEventListener("input", (e) => {
 // vars 
 let baseFreq = 130; 
 let scaleOrb = 5; 
+let spacing = 5; 
 const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xffff00, 0xffff00, 0xffff00]; // red, green, blue, yellow
 
 
@@ -159,6 +160,8 @@ camera.position.z = 120;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.8; // start low
 document.body.appendChild(renderer.domElement);
 
 
@@ -175,7 +178,7 @@ controls.maxPolarAngle = Math.PI / 2; // limit tilt
 // 				scene.add( hemiLight );
 
 // LINE FOR CONTEXT
-const start = new THREE.Vector3(10, 0, -200);
+const start = new THREE.Vector3(200, 0, 0);
 const end = new THREE.Vector3(0, 0, 0);
 
 const points = [];
@@ -190,7 +193,7 @@ for (let i = 0; i < numPoints; i++) {
 }
 
 const geometryP = new THREE.BufferGeometry().setFromPoints(points);
-const materialP = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+const materialP = new THREE.PointsMaterial({ color: 0xfff, size: 0.5 });
 const pointMap = new THREE.Points(geometryP, materialP);
 const positions = geometryP.attributes.position; // Store original positions
 const originalPositions = positions.array.slice(); // copy
@@ -201,7 +204,7 @@ scene.add(pointMap);
 const stars = [];
 const spread = 200; // how far particles spread from center
 
-for (let i = 0; i < 200; i++) {
+for (let i = 0; i < 500; i++) {
   const star = new THREE.Vector3(
     (Math.random() - 0.5) * spread,
     (Math.random() - 0.5) * spread,
@@ -212,7 +215,7 @@ for (let i = 0; i < 200; i++) {
 }
 
 const geometryS = new THREE.BufferGeometry().setFromPoints(stars);
-const materialS = new THREE.PointsMaterial({ color: 0xFFC000, size: 0.1 });
+const materialS = new THREE.PointsMaterial({ color: 0xFFf, size: 0.5 });
 const starsMap = new THREE.Points(geometryS, materialS);
 const positionsS = geometryP.attributes.position; // Store original positions
 const originalPositionsS = positions.array.slice(); // copy
@@ -260,7 +263,6 @@ scene.add(sunLight);
 const ambient = new THREE.AmbientLight(0xffffff);
 scene.add(ambient);
 
-let spacing = 3; 
 
 // 🌍 Planet data (scaled)
 const planets = [
@@ -293,12 +295,14 @@ const planetT = [
 // create refleuctive material 
 const loaderEnviron = new RGBELoader();
 
-loaderEnviron.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_09_1k.hdr', (texture) => {
+loaderEnviron.load('media/pinksunset.hdr', (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
 
   scene.environment = texture; // reflections
   scene.background = texture;  // visible skybox
 });
+
+
 
 
 // Create planets as sprites
@@ -323,13 +327,14 @@ const planetMeshes = planets.map((p, index) => {
 
   const material = new THREE.MeshPhysicalMaterial({
   map: planetTexture,  // your image stays
-  metalness: 0.5,   // mix between texture & reflection
-  roughness: 0.2,   // slight blur
-  clearcoat: 1,
-  opacity: 0.8, // 50% translucent
-  transparent: true, 
-  clearcoatRoughness: 0,
-  envMapIntensity: 1
+  transparent: true
+  //metalness: 0.5,   // mix between texture & reflection
+//  roughness: 0.2,   // slight blur
+//clearcoat: 1,
+  //opacity: 0.8, // 50% translucent
+  //transparent: true, 
+//  clearcoatRoughness: 0,
+//  envMapIntensity: 1
 });
 
 
@@ -354,14 +359,44 @@ const material1 = new THREE.MeshStandardMaterial({
   metalness: 0
 });
 
-const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high segments for smoothness
-  const orb = new THREE.Mesh(geometry, material);
+const material2 = new THREE.MeshStandardMaterial({
+  metalness: 0,
+  roughness: 0,
+  transmission: 1,   // enables glass-like transparency
+  thickness: 1,
+  envMap: scene.environment,
+  envMapIntensity: 1,
+  //ior: 1.5,          // index of refraction
+});
+
+// inner marble
+const inner = new THREE.Mesh(
+  new THREE.SphereGeometry(3, 64, 64),
+  new THREE.MeshStandardMaterial({ 
+    map: planetTexture
+   })
+);
+
+// outer glass
+const outer = new THREE.Mesh(
+  new THREE.SphereGeometry(25, 64, 64),
+  new THREE.MeshPhysicalMaterial({
+    transmission: 1,
+    roughness: 0,
+    thickness: 0.5,
+    ior: 1.3,
+  })
+);
+
+  const orbGroup = new THREE.Group();
+  orbGroup.add(outer)
+  orbGroup.add(inner)
 
 
   // attach to orb
 //orb.add(sprite);
   // Optional: add a point light for glow (same as before)
-  const light = new THREE.PointLight(colors[index % colors.length], 1000, 1000);
+  const light = new THREE.PointLight(colors[index % colors.length], 10, 10);
   light.position.set(0, 0, 0);
   light.castShadow = true;
   light.shadow.mapSize.width = 1024;
@@ -372,20 +407,14 @@ const geometry = new THREE.SphereGeometry(p.size, 64, 64); // radius 1, high seg
   // Random starting angle for orbit
   const angle = Math.random() * Math.PI * 2;
 
-  scene.add(orb);
+  scene.add(orbGroup);
   iter++; 
 
-  return { ...p, mesh: orb, angle };
+  return { ...p, mesh: orbGroup, angle };
 });
 
 
-// ⚡ Tone.js Setup 
 
-// Array of different notes for each planet
-//const planetNotes = [196.22,163.51,130.81,174.41,327.03,209.30,294.32,245.14]; 
-
-// Create a synth for each planet
-// ANGELIC PLANET SYNTHS
 
 // Create global effects
 
@@ -439,11 +468,11 @@ function playNote(synth, note, duration = "8n") {
     lowGain.gain.value = 0.5;
   }
   // test
-  bloom.strength = THREE.MathUtils.lerp(
+  /*bloom.strength = THREE.MathUtils.lerp(
   bloom.strength,
   0 + note/300,
   0.01
-);
+);*/
 
 
   synth.triggerAttackRelease(note, duration);
@@ -460,7 +489,7 @@ noise.start();
 // Track triggers and original colors
 const lineX = 0;           
 const triggered = new Set(); // track which planets already triggered
-const originalColors = planetMeshes.map(p => p.mesh.material.color.clone());
+//const originalColors = planetMeshes.map(p => p.mesh.material.color.clone());
 
 
 //post
@@ -469,8 +498,10 @@ const originalColors = planetMeshes.map(p => p.mesh.material.color.clone());
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 
-const res = new THREE.Vector2(window.innerWidth, window.innerHeight);
+// make it prettier 
 
+
+const res = new THREE.Vector2(window.innerWidth, window.innerHeight);
 const godRenderTarget = new THREE.WebGLRenderTarget(res.x, res.y);
 const godRenderTarget2 = new THREE.WebGLRenderTarget(res.x, res.y);
 const godRaysPass = new ShaderPass(GodRaysShader);
@@ -482,7 +513,7 @@ afterimagePass.uniforms.damp.value = 0;
 const radialPass = new ShaderPass(RadialBlurShader);
 //composer.addPass(radialPass);
 
-composer.addPass(afterimagePass);
+//composer.addPass(afterimagePass);
 const params = {
   weight: 0.9,
   decay: 0.95,
@@ -492,16 +523,16 @@ const params = {
 };
 
 const bloom = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0,   // strength
-  0.2,   // radius
-  0.03   // threshold
+ new THREE.Vector2(window.innerWidth, window.innerHeight),
+  3,   // strength
+  0.02,   // radius
+  0.6   // threshold
 );
 
 //composer.addPass(bloom);
 
-const film = new FilmPass(0.05, 0.025, 648, false);
-//composer.addPass(film);
+const film = new FilmPass(0.2, 0.005, 648, false);
+composer.addPass(film);
 
 const rgbShift = new ShaderPass(RGBShiftShader);
 rgbShift.uniforms.amount.value = 0.0015;
@@ -548,7 +579,7 @@ const sunScreen = new THREE.Vector3();
 
 
 
-const gui = new GUI();
+/*const gui = new GUI();
  gui.add(afterimagePass.uniforms.damp, "value", 0, 1).name("damp");
 				gui.add(params, 'weight', 0, 1).name('weight');
 gui.add(params, 'decay', 0, 1).name('decay');
@@ -557,7 +588,7 @@ gui.add(params, 'exposure', 1, 10).name('exposure');
 gui.add(params, 'strength', 0, 1).onChange(v => {
   radialPass.uniforms.strength.value = v;
 });
-
+*/
 
 		
 
@@ -602,7 +633,7 @@ gravityPass.uniforms.strength.value =
     //const z = originalPositions[i3 + 2];
 
     // floating motion
-    const offset = Math.sin(time * 0.003 + i);
+    const offset = Math.cos(time * 0.003 + i);
     positions.array[i3 + 1] = y + offset; // move Y
   }
 
