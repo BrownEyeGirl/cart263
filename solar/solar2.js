@@ -1,3 +1,7 @@
+
+// most important part lowk 
+//import { WebSocketServer } from "ws";
+
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 // lense flare 
@@ -30,8 +34,13 @@ import * as GodRaysShader from "https://cdn.jsdelivr.net/npm/three@0.144.0/examp
 import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/RGBELoader.js';
 
 
+const socket = new WebSocket("ws://localhost:8080");
+const data = "hi"; 
 
-
+socket.onmessage = (event) => {
+  data = JSON.parse(event.data);
+  console.log("dataa" + data);
+};
 
 // post
 const RadialBlurShader = {
@@ -72,11 +81,25 @@ const RadialBlurShader = {
   `
 };
 
+
+socket.onopen = () => {
+  console.log(" WebSocket connected");
+};
+
+socket.onerror = (e) => {
+  console.log("WebSocket error", e);
+};
+
+socket.onclose = () => {
+  console.log("WebSocket closed");
+};
+
+
 let timer, group;
 let renderPipeline;
 
 
-
+//document.body.textContent="hi";
 // SLIDER VALUES
 let vel=2; 
 const velSlider = document.createElement("input");
@@ -136,6 +159,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 
 camera.position.set(0, 50, 100);
+//camera.lookAt(new THREE.Vector3(0, 0, 0))
 camera.position.z = 120;
 
 
@@ -167,6 +191,8 @@ document.body.appendChild(renderer.domElement);
 
 // add controls 
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.autoRotate=true; 
+controls.rotateSpeed=0.75; 
 // Optional but recommended
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
@@ -202,7 +228,7 @@ scene.add(pointMap);
 
 // stars
 const stars = [];
-const spread = 200; // how far particles spread from center
+const spread = 400; // how far particles spread from center
 
 for (let i = 0; i < 500; i++) {
   const star = new THREE.Vector3(
@@ -245,8 +271,11 @@ const spriteMaterial = new THREE.SpriteMaterial({
   blending: THREE.AdditiveBlending
 });
 
+
 const flare = new THREE.Sprite(spriteMaterial);
-flare.scale.set(20, 20, 100); // size of the glow
+let flareScale = 100
+
+flare.scale.set(flareScale, flareScale, 100); // size of the glow
 flare.position.copy(sun.position);
 scene.add(flare);
 
@@ -590,8 +619,9 @@ gui.add(params, 'strength', 0, 1).onChange(v => {
 });
 */
 
-		
-
+		//cam 
+const radius = 5; // distance from center
+let camAngle = 90;
 
 
 
@@ -599,6 +629,13 @@ gui.add(params, 'strength', 0, 1).onChange(v => {
 // 💫 Animation loop
 function animate(time) {
   requestAnimationFrame(animate);
+
+  // camera pisiton angle += 0.005; // controls speed
+
+  //camera.position.x = radius * Math.cos(camAngle);
+  //camera.position.z = radius * Math.sin(camAngle);
+
+  camera.lookAt(0, 0, 0); // always face center
 
   // sun gravity godrays
   sun.updateMatrixWorld();
@@ -621,7 +658,13 @@ planetMeshes.forEach(p => {
 gravityPass.uniforms.strength.value =
   0.015 + Math.min(totalEnergy * 0.01, 0.6);
 
+  // FLARE PULSE
+  const t = time * 0.001; // convert to seconds
 
+  const flareScale = Math.sin(t * 4) * 10 + 50;
+  flare.scale.set(flareScale, flareScale, 1);
+
+  console.log(flareScale);
 
 
   // PARTICLES LINE 

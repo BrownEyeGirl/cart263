@@ -27,7 +27,7 @@ let scene, camera, renderer, controls;
     0.1,
     100000
   );
-  camera.position.set(0, 4, 1); // slightly forward
+  camera.position.set(0, 4, 0); // slightly forward
 
   camera.layers.enable(1); // Main camera sees 0 and 1
 
@@ -95,6 +95,31 @@ const texture = new THREE.TextureLoader().load(
   'https://cdn.creazilla.com/cliparts/7863723/silhouette-of-man-standing-and-facing-forward-clipart-md.png'
 );
 
+// randomly generate figures 
+/*
+const people = [];
+const spread = 200; // how far people spread from center
+const pop = 40 // how many 
+
+for (let i = 0; i < pop; i++) { 
+  const person = new THREE.Vector3(
+    (Math.random() - 0.5) * spread,
+    (Math.random() - 0.5) * spread,
+    (Math.random() - 0.5) * spread
+  );
+
+  people.push(person); // add to array 
+}
+
+const geometryS = new THREE.BufferGeometry().setFromPoints(stars);
+const materialS = new THREE.PointsMaterial({ color: 0xFFf, size: 0.5 });
+const starsMap = new THREE.Points(geometryS, materialS);
+const positionsS = geometryP.attributes.position; // Store original positions
+const originalPositionsS = positions.array.slice(); // copy
+scene.add(starsMap);
+*/
+
+
 // Create sprite material
 const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
 
@@ -107,6 +132,10 @@ sprite.castShadow = false;
 sprite.receiveShadow = false;
 sprite.layers.set(1); // put on a separate layer
 scene.add(sprite);
+
+
+// camera oo
+
 
 
 animate()
