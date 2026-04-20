@@ -15,27 +15,18 @@ import { UnrealBloomPass } from 'https://unpkg.com/three/examples/jsm/postproces
 
 const scene = new THREE.Scene();
 
-// Canvas
-const canvas = document.querySelector("canvas#three-ex");
-
-
 // Directional light
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.4);
 directionalLight.position.set(20, 30, -1);
+directionalLight.castShadow = true;
+directionalLight.shadow.mapSize.width = 1024; // we can make them more efficient, but needs to be by factors of 2
+directionalLight.shadow.mapSize.height = 1024;
+directionalLight.shadow.radius = 1; // adds bluring effect
+
 scene.add(directionalLight)
 
 
-//Sphere and plane
-const geometry = new THREE.SphereGeometry(0.5, 32, 32);
-const material = new THREE.MeshStandardMaterial({});
-material.roughness = 0.7;
 
-const sphere = new THREE.Mesh(geometry, material);
-sphere.position.set(0, 1, 0)
-//scene.add(sphere);
-
-
-// glowoing square tets
 // GLOWING SQUARE (add only)
 //const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
  const glowMat = new THREE.MeshStandardMaterial({
@@ -54,14 +45,14 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
 
   const baseHouse = gltf.scene;
 
-  for (let i = 0; i < repeat; i += 3) {
-    for (let j = 0; j < repeat; j += 3) {
+  for (let i = -1*repeat/2; i < repeat/2; i += 3) {
+    for (let j = -1*repeat/2; j < repeat/2; j += 3) {
 
       const house = baseHouse.clone(); // or SkeletonUtils.clone
       const house2 = baseHouse.clone(); 
 
-      house.position.set(-10, 0, j*5);
-      house2.position.set(10, 0, j*5);
+      house.position.set(-10, -0.2, j*5);
+      house2.position.set(10, -0.2, j*5);
       house2.rotation.y = Math.PI
 
       group.add(house);
@@ -111,18 +102,26 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
   scene.add(group);
 });
 
+const textureLoader = new THREE.TextureLoader();
+const roadTexture = textureLoader.load('media/street/road.jpg');
 
-const ground = new THREE.MeshLambertMaterial({
-  color: 0xfff,
-  blending: THREE.NormalBlending,
- transparent: false
-});
-const plane = new THREE.Mesh(new THREE.PlaneGeometry(8, 150), ground);
-plane.receiveShadow = true; // Receives shadow
 
-scene.add(plane);
-plane.rotation.x = -Math.PI * 0.5;
-plane.position.y = 0.1;
+roadTexture.repeat.set(1, 10); 
+//roadTexture.center.set(0.5, 0.5); // rotate around center
+//roadTexture.rotation = Math.PI / 2; // 90 degrees
+
+roadTexture.wrapS = THREE.RepeatWrapping;
+roadTexture.wrapT = THREE.RepeatWrapping;
+
+
+const roadGeo = new THREE.PlaneGeometry(10, 100);
+const roadMat = new THREE.MeshStandardMaterial({ map: roadTexture });
+
+const road = new THREE.Mesh(roadGeo, roadMat);
+road.rotation.x = -Math.PI / 2; // make it horizontal
+//road.rotation.y = -Math.PI/2;
+scene.add(road);
+
 
 const sizes = {
   width: window.innerWidth,
@@ -147,27 +146,21 @@ document.body.appendChild(renderer.domElement);
 
 renderer.setSize(sizes.width, sizes.height);
 renderer.shadowMap.enabled = true;
-sphere.castShadow = true; // try to activate the least amount possible for browser efficiency 
-plane.receiveShadow = true;
-directionalLight.castShadow = true;
-directionalLight.shadow.mapSize.width = 1024; // we can make them more efficient, but needs to be by factors of 2
-directionalLight.shadow.mapSize.height = 1024;
-directionalLight.shadow.radius = 1; // adds bluring effect
 
 
-
-// Controls
+// CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 
-// spotlight
-const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)
+// SPOTLIGHT
+/*const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)
 //new
 spotLight.castShadow = true
 spotLight.position.set(0, 2, 2)
 scene.add(spotLight)
 scene.add(spotLight.target)
+*/
 
 
 //ANIMATE
@@ -177,20 +170,17 @@ function animate() {
   controls.update();
 
   let x = directionalLight.position.x // move light source
-  //x+= Math.random(-1,0);
-  //log(x)
   directionalLight.position.set(x,5, 0)
 
+  // PULSE ANIMATION (add only)
+  pulseTime += 0.02;
 
-// PULSE ANIMATION (add only)
-pulseTime += 0.02;
+  // smooth sine wave (0 → 1 → 0)
+  const pulse = (Math.sin(pulseTime) + 1) / 2;
 
-// smooth sine wave (0 → 1 → 0)
-const pulse = (Math.sin(pulseTime) + 1) / 2;
-
-// brightness pulse
-glowMat.color.set(0x00ffff); // keep color stable
-glowMat.color.multiplyScalar(5 + pulse * 10);
+  // brightness pulse
+  glowMat.color.set(0x00ffff); // keep color stable
+  glowMat.color.multiplyScalar(5 + pulse * 10);
 
   renderer.render(scene, camera);
   window.requestAnimationFrame(animate);

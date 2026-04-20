@@ -26,74 +26,73 @@ directionalLight.shadow.radius = 1; // adds bluring effect
 scene.add(directionalLight)
 
 
-
-// GLOWING SQUARE (add only)
-//const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
- const glowMat = new THREE.MeshStandardMaterial({
-  color: 0x22,          // base color (keep darker)
-  emissive: 0x0ff,       // glow color
-  emissiveIntensity: 500    //  intensity
-});
+// to see
+const light = new THREE.AmbientLight( 0xfffff ); // soft white light
+scene.add( light );
 
 
 //  CREATE HOUSES 
 let repeat = 15; 
-   let group = new THREE.Object3D();
+let group = new THREE.Object3D();
 
-const houseLoader = new GLTFLoader();
-houseLoader.load("media/house/scene.gltf", function(gltf) {
+//  CREATE ONCE (outside loops)
+const windowLight = new THREE.PointLight(0x00ffff, 5, 10); 
+windowLight.distance = 50;
+windowLight.intensity = 500;
+//windowLight.decay = 10;
+
+
+const glowGeo = new THREE.BoxGeometry(2, 2, 3);
+const glowMat = new THREE.MeshStandardMaterial({
+  color: 0x002222,
+  emissive: 0x00ffff,
+  emissiveIntensity: 5
+});
+//glowMat.add(windowLight);
+
+const loader = new GLTFLoader();
+//loader.setPath("media/street/simple_house/"); // load textures
+
+loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) {
 
   const baseHouse = gltf.scene;
+  baseHouse.scale.set(1, 1, 1); // uniform scale
 
-  for (let i = -1*repeat/2; i < repeat/2; i += 3) {
-    for (let j = -1*repeat/2; j < repeat/2; j += 3) {
+  
+  
 
-      const house = baseHouse.clone(); // or SkeletonUtils.clone
-      const house2 = baseHouse.clone(); 
 
-      house.position.set(-10, -0.2, j*5);
-      house2.position.set(10, -0.2, j*5);
-      house2.rotation.y = Math.PI
+  for (let i = -repeat/2; i < repeat/2; i += 3) {
+    for (let j = -repeat/2; j < repeat/2; j += 3) {
+
+      //  CLONE HOUSES
+      const house = baseHouse.clone(true);
+
+      const house2 = baseHouse.clone(true);
+
+      house.position.set(-10, -0.2, j * 5);
+      house.rotation.y=Math.PI/2; // 90
+
+      house2.position.set(10, -0.2, j * 5);
+      house2.rotation.y= -Math.PI/2; // 90
 
       group.add(house);
       group.add(house2);
 
-      // WINDOW LIGHTS 
-      const glowGeo = new THREE.BoxGeometry(2, 2, 3);
-      const glowGeo2 = new THREE.BoxGeometry(2, 2, 3);
-      //const glowMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const glowMat = new THREE.MeshStandardMaterial({
-        color: 0x22,          // base color (keep darker)
-        emissive: 0x0ff,       // glow color
-        emissiveIntensity: 500    // intensity
+      // WINDOW LIGHTS (reuse geo + material so it doesnt freeze)
+      const positions = [
+       // [8, 2, 2.5 + j * 5], // x, y, 
+        [-11, 0.5, -1 + j * 5],
+       // [-8, 2, 2.5 + j * 5],
+        [-11, 0.5, 0 + j * 5], //forward, height, lr
+      ];
+
+      positions.forEach((pos) => {
+        const glow = new THREE.Mesh(glowGeo, glowMat);
+        glow.position.set(pos[0], pos[1], pos[2]);
+        scene.add(glow);
       });
-
-      const glowMat2 = new THREE.MeshStandardMaterial({
-        color: 0x22,          // base color (keep darker)
-        emissive: 0x0ff,       // glow color
-        emissiveIntensity: 500    // intensity
-      });
-      const glowSquareL1 = new THREE.Mesh(glowGeo, glowMat);
-      const glowSquareL2 = new THREE.Mesh(glowGeo2, glowMat2);
-      const glowSquareR1 = new THREE.Mesh(glowGeo, glowMat);
-      const glowSquareR2 = new THREE.Mesh(glowGeo2, glowMat2);
-
-      glowSquareL1.position.set(8, 2, 2.5+j*5); 
-      glowSquareL2.position.set(8, 2, -2.5+j*5); 
-      glowSquareR1.position.set(-8, 2, 2.5+j*5); 
-      glowSquareR2.position.set(-8, 2, -2.5+j*5); 
-
-      scene.add(glowSquareL1);
-      scene.add(glowSquareL2);
-      scene.add(glowSquareR1);
-      scene.add(glowSquareR2); 
-
-
-      // use later for street lights 
-      const glowLight = new THREE.PointLight(0x00ffff, 1, 1.5);
-      glowLight.position.set(8, 2, 2.5);
-
-      scene.add(glowLight);
+      
 
 
     }
@@ -101,6 +100,71 @@ houseLoader.load("media/house/scene.gltf", function(gltf) {
 
   scene.add(group);
 });
+
+// load grass 
+loader.load("media/street/green_field_greener/scene.gltf", function(gltf) {
+
+  const grassMain = gltf.scene;
+  grassMain.scale.set(1, 1, 1); // uniform scale
+ 
+
+ for (let i = -repeat/2; i < repeat/2; i += 3) {
+    for (let j = -repeat/2; j < repeat/2; j += 3) {
+
+      const grass = grassMain.clone(true);
+
+      const grass2 = grassMain.clone(true);
+
+      grass.position.set(-12.4, -0.2, j * 5);
+      grass.rotation.y=Math.PI/2; // 90
+
+      grass2.position.set(12.4, -0.2, j * 5);
+      grass2.rotation.y= -Math.PI/2; // 90
+      scene.add(grass)
+      scene.add(grass2)
+
+      //group.add(grass);
+     // group.add(grass2);
+    }
+  }
+  
+
+}); 
+
+
+
+
+/*lLoader.load("media/street/streetlight/scene.gltf", function(gltf) {
+
+  const lamp = gltf.scene;
+
+  lamp.position.set(0, 0, 0);
+  lamp.scale.set(20,20,20)
+  scene.add(lamp);
+
+  const streetLight = new THREE.SpotLight(
+  0xffcc88,        // warm sodium-vapor streetlight
+  2.5,             // intensity
+  20,              // range
+  Math.PI * 0.25   // narrower cone
+);
+
+streetLight.decay = 2;
+streetLight.penumbra = 0.6;
+/*const bulb = new THREE.Mesh(
+  new THREE.SphereGeometry(0.1),
+  new THREE.MeshBasicMaterial({ color: 0xffddaa })
+);
+
+streetLight.add(bulb); */
+
+//});
+// streetlight 
+/*const spotLight = new THREE.SpotLight(0xff0000, 5, 80, Math.PI * 3); // color, intensity, distance, cone size
+spotLight.castShadow = true;
+scene.add(spotLight);
+scene.add(spotLight.target);*/
+
 
 const textureLoader = new THREE.TextureLoader();
 const roadTexture = textureLoader.load('media/street/road.jpg');
@@ -141,7 +205,10 @@ scene.add(camera);
 
 
 //RENDER
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
 document.body.appendChild(renderer.domElement);
 
 renderer.setSize(sizes.width, sizes.height);
@@ -169,8 +236,8 @@ window.requestAnimationFrame(animate);
 function animate() {
   controls.update();
 
-  let x = directionalLight.position.x // move light source
-  directionalLight.position.set(x,5, 0)
+  //let x = directionalLight.position.x // move light source
+  //directionalLight.position.set(x,5, 0)
 
   // PULSE ANIMATION (add only)
   pulseTime += 0.02;
