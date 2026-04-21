@@ -92,6 +92,11 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
     group.add(house);
     group.add(house2);
 
+
+    // grass
+
+
+
     // WINDOW LIGHTS (reuse geo + material so it doesnt freeze)
     /*const positions = [
       // [8, 2, 2.5 + j * 5], // x, y, 
@@ -106,34 +111,35 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
       group.add(glow);
     });*/
   }
+
+
+    loader.load("media/street/green_field_greener/scene.gltf", function(gltf) {
+
+    const grassMain = gltf.scene;
+    grassMain.scale.set(1, 1, 1); // uniform scale
+
+      for (let j = -12; j < repeat; j += 3) {
+
+        const grass = grassMain.clone(true);
+
+        const grass2 = grassMain.clone(true);
+
+        grass.position.set(-12.4, -0.2, j * 5);
+        grass.rotation.y=Math.PI/2; // 90
+
+        grass2.position.set(12.4, -0.2, j * 5);
+        grass2.rotation.y= -Math.PI/2; // 90
+        group.add(grass)
+        group.add(grass2)
+
+      }
+  }); 
+
   scene.add(group);
   houses.push(group); 
 });
 
-// load grass 
-loader.load("media/street/green_field_greener/scene.gltf", function(gltf) {
 
-  const grassMain = gltf.scene;
-  grassMain.scale.set(1, 1, 1); // uniform scale
-
- for (let i = -12; i < repeat; i += 3) {
-    for (let j = -12; j < repeat; j += 3) {
-
-      const grass = grassMain.clone(true);
-
-      const grass2 = grassMain.clone(true);
-
-      grass.position.set(-12.4, -0.2, j * 5);
-      grass.rotation.y=Math.PI/2; // 90
-
-      grass2.position.set(12.4, -0.2, j * 5);
-      grass2.rotation.y= -Math.PI/2; // 90
-      scene.add(grass)
-      scene.add(grass2)
-
-    }
-  }
-}); 
 
  const orbMat = new THREE.MeshStandardMaterial({
         color: 0x111111,
@@ -266,7 +272,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100,
 );
-camera.position.x = 0;
+camera.position.x = 2;
 camera.position.y = 3;
 camera.position.z = 2;
 
