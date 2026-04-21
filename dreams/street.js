@@ -3,17 +3,15 @@
  */
 
 
+// generic import controls 
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// for orb
+// for visual effects 
 import { EffectComposer } from 'https://unpkg.com/three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'https://unpkg.com/three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'https://unpkg.com/three/examples/jsm/postprocessing/UnrealBloomPass.js';
-
-
-// for blur effect 
 import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/ShaderPass.js";
 import { HorizontalBlurShader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/HorizontalBlurShader.js";
 import { VerticalBlurShader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/VerticalBlurShader.js";
@@ -24,9 +22,37 @@ import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160/examples/js
 
 
 
+// create scene 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0xfff, 10, 80);
+scene.fog = new THREE.Fog(0xfff, 10, 80); // add fog 
 scene.background = new THREE.Color(0xFFF)
+
+
+// suburbs 
+  //  CREATE HOUSES 
+let pulseTime = 0; 
+let repeat = 60; 
+let group = new THREE.Object3D();
+const houses = []; // for animating 
+
+
+// CREATE CARS 
+let carGroup = new THREE.Object3D(); 
+const cars = []; // for animating 
+const glowMat = new THREE.MeshStandardMaterial({
+  color: 0x002222,
+  emissive: 0x00ffff,
+  emissiveIntensity: 5
+});
+
+
+
+// rain 
+let rainMesh;
+let splashes = [];
+let rainCount = 120;
+const areaSize = 100;
+let rainSpeed = 0.4;
 
 
 // Directional light
@@ -40,39 +66,147 @@ directionalLight.shadow.radius = 1; // adds bluring effect
 scene.add(directionalLight)
 
 
-// to see
-const light = new THREE.AmbientLight( 0xfffff ); // soft white light
+// to see, ambient light 
+const light = new THREE.AmbientLight( 0xFFB6C1, 0.6 ); // soft white light
 light.distance = 500; 
-//scene.add( light );
+scene.add( light );
+
+// create suburbs 
+createSuburbs(); 
 
 
-//  CREATE HOUSES 
-let repeat = 60; 
-let group = new THREE.Object3D();
 
-// CREATE CARS 
-let carGroup = new THREE.Object3D(); 
+// camera 
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+};
+const camera = new THREE.PerspectiveCamera(
+  75,
+  sizes.width / sizes.height,
+  0.1,
+  100,
+);
+camera.position.x = 2;
+camera.position.y = 3;
+camera.position.z = 2;
+scene.add(camera);
 
-//  CREATE ONCE (outside loops)
+
+//RENDER
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+document.body.appendChild(renderer.domElement);
+
+renderer.setSize(sizes.width, sizes.height);
+renderer.shadowMap.enabled = true;
+
+/*// HDR background 
+// create refleuctive material 
+const loaderEnviron = new RGBELoader();
+
+loaderEnviron.load('media/street/underwater-light-rays.jpg', (texture) => {
+  texture.mapping = THREE.EquirectangularReflectionMapping;
+
+  scene.environment = texture; // reflections
+  scene.background = texture;  // visible skybox
+}); */
+
+// CONTROLS
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
+// EFFECT COMPOSER 
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  0.2,  // strength (intensity)
+  0.4,  // radius (spread)
+  0.85  // threshold (what glows)
+);
+composer.addPass(bloomPass);
+
+const bokeh = new BokehPass(scene, camera, {
+  focus: 10.0,        // distance where image is sharp
+  aperture: 0.0005,  // blur strength (smaller = subtle blur)
+  maxblur: 0.01      // max blur allowed
+});
+composer.addPass(bokeh);
+
+// SPOTLIGHT
+/*const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)
+//new
+spotLight.castShadow = true
+spotLight.position.set(0, 2, 2)
+scene.add(spotLight)
+scene.add(spotLight.target)
+*/
+
+
+//ANIMATE
+const sceneDuration1 = 10; // z length of first scene (suburbs)
+const sceneDuration2 = 80 // y length of rising up
+
+
+window.requestAnimationFrame(animate);
+function animate() {
+  // SCENE 1 - move through suburbs   
+  if(camera.position.z<sceneDuration1) {
+    updateSuburbs(); 
+    camera.position.z += 0.09; // move forward along Z
+    controls.target.set(0, 0, camera.position.z + 100);
+  }
+
+
+  // SCENE 2 - rise up
+  if(camera.position.z > sceneDuration1 && camera.position.y < sceneDuration2) { // rise up sequence 
+    scene.fog = new THREE.Fog(0xfff, 10, 20);
+    controls.target.set(0, -1, camera.position.z);
+    camera.position.y += 0.09; // rise up
+  }
+  else{
+    // add rain 
+
+  createRain(camera.position.z);
+  if(rainCount < 5000)
+    rainCount += 300; 
+//  camera.position.z += 0.01; // move forward along Z
+  //camera.position.y+=0.02
+
+  updateRain();
+  updateSplashes();
+  }
+
+  if(camera.position.y > 30) { // when youre high enough
+
+  }
+
+  // controls updating (always)
+  controls.update();
+  composer.render();
+  window.requestAnimationFrame(animate);
+}
+
+
+
+/* SPAWN IN INFINITE SUBURB */ 
+function createSuburbs() {
+
+
+/*//  Window lights (outside loops)
 const windowLight = new THREE.PointLight(0x00ffff, 5, 10); 
 windowLight.distance = 50;
-windowLight.intensity = 500;
-//windowLight.decay = 10;
-
+windowLight.intensity = 500; */
 
 const glowGeo = new THREE.BoxGeometry(2, 2, 3);
-const glowMat = new THREE.MeshStandardMaterial({
-  color: 0x002222,
-  emissive: 0x00ffff,
-  emissiveIntensity: 5
-});
+
 //glowMat.add(windowLight);
 
-const loader = new GLTFLoader();
-//loader.setPath("media/street/simple_house/"); // load textures
-
-
-const houses = []; // for animating 
+const loader = new GLTFLoader(); // loader for all of the gltf files 
 let housePos = repeat; 
 loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) {
   const baseHouse = gltf.scene;
@@ -92,13 +226,8 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
     group.add(house);
     group.add(house2);
 
-
-    // grass
-
-
-
-    // WINDOW LIGHTS (reuse geo + material so it doesnt freeze)
-    /*const positions = [
+    /*// WINDOW LIGHTS (reuse geo + material so it doesnt freeze)
+    const positions = [
       // [8, 2, 2.5 + j * 5], // x, y, 
       [-11, 0.5, -1 + j * 5],
       // [-8, 2, 2.5 + j * 5],
@@ -111,8 +240,6 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
       group.add(glow);
     });*/
   }
-
-
     loader.load("media/street/green_field_greener/scene.gltf", function(gltf) {
 
     const grassMain = gltf.scene;
@@ -140,7 +267,7 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
 });
 
 
-
+// car headlights 
  const orbMat = new THREE.MeshStandardMaterial({
         color: 0x111111,
         emissive: 0xEE4B2B,
@@ -153,9 +280,7 @@ loader.load(" media/street/americ_an_football_house/scene.gltf", function(gltf) 
         emissiveIntensity: 5
       });
 
-    
 // load car 
-const cars = []; // for animating 
 loader.load("media/street/old_rusty_car/scene.gltf", function(gltf) {
 
   const carMain = gltf.scene;
@@ -209,8 +334,6 @@ loader.load("media/street/old_rusty_car/scene.gltf", function(gltf) {
     }
 }); 
 
-
-// church 
 // load church (commented out)  
 loader.load("media/street/entry_to_church_of_saints_cyril_and_methodius/scene.gltf", function(gltf) {
 
@@ -219,8 +342,6 @@ loader.load("media/street/entry_to_church_of_saints_cyril_and_methodius/scene.gl
   church.position.set(0, 17, (repeat-1) * 5);
   //scene.add(church)
 }); 
-
-
 /*lLoader.load("media/street/streetlight/scene.gltf", function(gltf) {
 
   const lamp = gltf.scene;
@@ -245,7 +366,6 @@ streetLight.penumbra = 0.6;
 
 streetLight.add(bulb); */
 
-
 //road
 const textureLoader = new THREE.TextureLoader();
 const roadTexture = textureLoader.load('media/street/road.jpg');
@@ -260,105 +380,10 @@ const roadMat = new THREE.MeshStandardMaterial({ map: roadTexture });
 const road = new THREE.Mesh(roadGeo, roadMat);
 road.rotation.x = -Math.PI / 2; // make it horizontal
 scene.add(road);
+}
 
-
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
-const camera = new THREE.PerspectiveCamera(
-  75,
-  sizes.width / sizes.height,
-  0.1,
-  100,
-);
-camera.position.x = 2;
-camera.position.y = 3;
-camera.position.z = 2;
-
-scene.add(camera);
-
-
-//RENDER
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
-document.body.appendChild(renderer.domElement);
-
-renderer.setSize(sizes.width, sizes.height);
-renderer.shadowMap.enabled = true;
-
-// HDR background 
-// create refleuctive material 
-const loaderEnviron = new RGBELoader();
-
-loaderEnviron.load('media/street/underwater-light-rays.jpg', (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-
-  scene.environment = texture; // reflections
-  scene.background = texture;  // visible skybox
-});
-
-
-
-
-
-// CONTROLS
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-
-
-// COMPOSER 
-const composer = new EffectComposer(renderer);
-composer.addPass(new RenderPass(scene, camera));
-
-const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.2,  // strength (intensity)
-  0.4,  // radius (spread)
-  0.85  // threshold (what glows)
-);
-
-composer.addPass(bloomPass);
-
-// const vBlur = new ShaderPass(VerticalBlurShader); // vert blur 
-// vBlur.uniforms.v.value = 1 / window.innerHeight;
-// composer.addPass(vBlur);
-// const hBlur = new ShaderPass(HorizontalBlurShader); // hor blur 
-// hBlur.uniforms.h.value = 1 / window.innerWidth;
-// composer.addPass(hBlur);
-
-
-const bokeh = new BokehPass(scene, camera, {
-  focus: 10.0,        // distance where image is sharp
-  aperture: 0.0005,  // blur strength (smaller = subtle blur)
-  maxblur: 0.01      // max blur allowed
-});
-
-composer.addPass(bokeh);
-
-// SPOTLIGHT
-/*const spotLight = new THREE.SpotLight(0xff0000 ,5, 10, Math.PI * 0.3)
-//new
-spotLight.castShadow = true
-spotLight.position.set(0, 2, 2)
-scene.add(spotLight)
-scene.add(spotLight.target)
-*/
-
-
-//ANIMATE
-let pulseTime = 0; 
-window.requestAnimationFrame(animate);
-function animate() {
-  // camera 
-    camera.position.z += 0.03; // move forward along Z
-    controls.target.set(0, 0, camera.position.z + 100);
-
-
-  controls.update();
-
+/* UPDATE SUBURB TO CAMERA zPOSITION */ 
+function updateSuburbs() {
   // PULSE ANIMATION (add only)
   pulseTime += 0.02;
 
@@ -393,7 +418,6 @@ function animate() {
 
 
   const spacing = 15;
-const recycleDistance = 35;
 
 //camera.position.z += 0.1;
 const totalLength = spacing * houses.length;
@@ -403,9 +427,103 @@ houses.forEach((house) => {
     house.position.z += totalLength;
   }
 });
-
-  composer.render();
-
-  window.requestAnimationFrame(animate);
 }
 
+/* SPAWN IN RAIN */
+function createRain(z) {
+
+  scene.remove(rainMesh)
+  // raindrops 
+  const geo = new THREE.BoxGeometry(0.02, 0.4, 0.02);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0x66ccff,
+    transparent: true,
+    opacity: 0.6
+  });
+  rainMesh = new THREE.InstancedMesh(geo, mat, rainCount);
+
+
+
+  const dummy = new THREE.Object3D();
+  const startPos = z; 
+
+  for (let i = 0; i < rainCount; i++) {
+
+    dummy.position.set(
+      (Math.random() - 0.5) * areaSize+startPos,
+      Math.random() * 50,
+      (Math.random() - 0.5) * areaSize
+    );
+
+    dummy.updateMatrix();
+    rainMesh.setMatrixAt(i, dummy.matrix);
+  }
+  scene.add(rainMesh);
+}
+
+/* SPAWN IN RAIN SPLASHES */  
+function spawnSplash(x, z) {
+  const splash = new THREE.Mesh(
+    new THREE.CircleGeometry(0.05, 8),
+    new THREE.MeshBasicMaterial({
+      color: 0x66ccff,
+      transparent: true,
+      opacity: 0.2
+    })
+  );
+
+  splash.rotation.x = -Math.PI / 2;
+  splash.position.set(x, 0.01, z);
+
+  splash.userData.life = 1.0;
+
+  scene.add(splash);
+  splashes.push(splash);
+}
+
+/* UPDATE THE SPLASH POS */ 
+function updateSplashes() {
+
+  for (let i = splashes.length - 1; i >= 0; i--) {
+
+    const s = splashes[i];
+
+    s.userData.life -= 0.02;
+
+    s.scale.setScalar(1 + (1 - s.userData.life) * 2);
+    s.material.opacity = s.userData.life;
+
+    if (s.userData.life <= 0) {
+      scene.remove(s);
+      splashes.splice(i, 1);
+    }
+  }
+}
+/* UPDATE THE RAIN POSITION */ 
+function updateRain() {
+
+  const dummy = new THREE.Object3D();
+
+  for (let i = 0; i < rainCount; i++) {
+
+    rainMesh.getMatrixAt(i, dummy.matrix);
+    dummy.position.setFromMatrixPosition(dummy.matrix);
+
+    dummy.position.y -= rainSpeed;
+
+    // 💥 HIT GROUND → spawn splash
+    if (dummy.position.y < 0) {
+
+      spawnSplash(dummy.position.x, dummy.position.z);
+
+      dummy.position.y = 50;
+      dummy.position.x = (Math.random() - 0.5) * areaSize;
+      dummy.position.z = (Math.random() - 0.5) * areaSize;
+    }
+
+    dummy.updateMatrix();
+    rainMesh.setMatrixAt(i, dummy.matrix);
+  }
+
+  rainMesh.instanceMatrix.needsUpdate = true;
+}
