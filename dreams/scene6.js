@@ -13,14 +13,17 @@ import { UnrealBloomPass } from 'https://unpkg.com/three/examples/jsm/postproces
 import { ShaderPass } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/ShaderPass.js";
 import { HorizontalBlurShader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/HorizontalBlurShader.js";
 import { VerticalBlurShader } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/shaders/VerticalBlurShader.js";
-import { BokehPass } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/BokehPass.js";
 import { GodraysPass } from "https://unpkg.com/three-good-godrays@0.8.1/build/three-good-godrays.esm.js";
 // for background
 import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160/examples/jsm/loaders/RGBELoader.js';
-import { EffectComposer, RenderPass } from "postprocessing";
 
 // for trees/ perlin noise 
 import { createNoise2D } from "https://cdn.skypack.dev/simplex-noise";
+
+// for blur 
+import { BokehPass } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/postprocessing/BokehPass.js";
+import { EffectComposer } from 'https://unpkg.com/three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://unpkg.com/three/examples/jsm/postprocessing/RenderPass.js';
 
 
 
@@ -59,18 +62,18 @@ scene.background = new THREE.Color(0xDAB1DA);
 
 
 // Directional light
-const directionalLight = new THREE.DirectionalLight(0xEDC8FF, 9);
+const directionalLight = new THREE.DirectionalLight(0xFFFF00, 3);
 directionalLight.position.set(50, 50, 1);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 2048; // we can make them more efficient, but needs to be by factors of 2
 directionalLight.shadow.mapSize.height = 2048;
-directionalLight.shadow.radius = 1; // adds bluring effect
+directionalLight.shadow.radius = 15; // adds bluring effect
 
 scene.add(directionalLight)
 
 
 // to see, ambient light 
-const light = new THREE.AmbientLight( 0xe6d7ff, 1); // soft white light
+const light = new THREE.AmbientLight( 0xe6d7ff, 9); // soft white light
 light.distance = 500; 
 scene.add( light );
 
@@ -86,9 +89,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100,
 );
-camera.position.x = 2;
-camera.position.y = 3;
-camera.position.z = 2;
+camera.position.x = 8;
+camera.position.y = 34;
+camera.position.z = 8;
 scene.add(camera);
 
 
@@ -116,10 +119,22 @@ const loaderEnviron = new RGBELoader();
 // CONTROLS
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.autoRotate= true; 
+controls.rotateSpeed=0.05; 
+camera.lookAt(0,30,0)
+
 
 // EFFECT COMPOSER 
-const composer = new EffectComposer( renderer, { frameBufferType: THREE.HalfFloatType } );
+const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
+
+// blur 
+  const bokeh = new BokehPass(scene, camera, {
+    focus: 20.0,        // distance where image is sharp
+    aperture: 0.0005,  // blur strength (smaller = subtle blur)
+    maxblur: 0.01      // max blur allowed
+  });
+  composer.addPass(bokeh);
 
 
 // create vars
@@ -130,11 +145,27 @@ createRoom();
 //createWildFlowers(); 
 //createFlowerField(); 
 
+// cam 
+let angle = 0;
+const radius = 8;
+const speed = -0.2; // controls rotation speed
+const clock = new THREE.Clock();
+
 
 // animate 
 window.requestAnimationFrame(animate);
 function animate() {
 
+  // cam 
+  const delta = clock.getDelta();
+  angle += delta * speed;
+
+  camera.position.x = radius * Math.cos(angle);
+  camera.position.z = radius * Math.sin(angle);
+
+  camera.lookAt(0, 30, 0); // look at center
+
+  renderer.render(scene, camera);
 
   // controls updating (always)
   controls.update();
@@ -216,7 +247,7 @@ scene.add(wall3)
 
         forest.traverse((child) => {
         if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({
+            child.material = new THREE.MeshPhysicalMaterial({
                  color: 0x000000,
 
                 metalness: 0.6,      // metallic look

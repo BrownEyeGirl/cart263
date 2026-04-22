@@ -23,9 +23,12 @@
 <!--<script type="module" src="rayCastTest.js"></script> --> 
 <!-- <script type="module" src="lightingOne.js"></script> --> 
  <script type="module" src="scene4.js" id="appScript"></script>
+ <script src="https://unpkg.com/tone@latest/build/Tone.js"></script>
 
  <script>
   const fadeOverlay=document.getElementById("fade"); 
+
+
 
   document.addEventListener("keydown", (event) => {
 
@@ -34,11 +37,73 @@
   }
 
 }); 
+
+
+// music 
+let playing = false; 
+
+
+function playMelody() {
+
+  
+ // synth 
+
+  const reverb = new Tone.Reverb({
+    decay: 4,
+    wet: 0.6
+  }).toDestination();
+
+  const panner = new Tone.Panner3D({
+    positionX: 0,
+    positionY: 0,
+    positionZ: 0
+  }).connect(reverb);
+
+  const synth = new Tone.Synth({
+    oscillator: { type: "sawtooth" },
+    envelope: {
+      attack: 0.5,
+      decay: 0.5,
+      sustain: 0.15,
+      release: 1
+    }
+  }).connect(panner);
+
+  const notes = ["C4", "E4", "G4", "A4", "C5"];
+
+  const loop = new Tone.Loop((time) => {
+    const note = notes[Math.floor(Math.random() * notes.length)];
+    synth.triggerAttackRelease(note, "1n", time);
+  }, "1m");
+
+  loop.start(0);
+
+  Tone.Transport.start();
+}
+
+document.addEventListener("click", async () => {
+  
+    await Tone.start();
+      playMelody();
+      setTimeout(() => {
+        playMelody();
+      }, 150)
+  
+});
+
+
+
+
  </script>
 </script>
   </head>
-  <body style="background-color: black;">
+  <body style="background-color: blue;">
     <p style="color:white; position:absolute">4/6</p>
     <div id="fade"></div>
+    <div style="position:absolute; display:flex; justify-content:center; align-items:flex-start; width:100%; height:100%;">
+    <h1 style="color:white; font-size:20px; margin-top:90vh">
+        Balancing on the dream meridian
+    </h1>
+</div>
   </body>
 </html>

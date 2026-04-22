@@ -62,7 +62,7 @@ directionalLight.shadow.radius = 1; // adds bluring effect
 
 
 // to see, ambient light 
-const light = new THREE.AmbientLight( 0x00FF59, 0.3 ); // soft white light
+const light = new THREE.AmbientLight( 0x00FF59, 1 ); // soft white light
 light.distance = 500; 
 scene.add( light );
 
@@ -84,9 +84,9 @@ const material = new THREE.MeshStandardMaterial({
     0.1,
     1000
   );
-  camera.position.set(30, 10, 30); 
-  camera.lookAt(100, 3, 100); 
-  camera.layers.enable(1); // Main camera sees 0 and 1
+  camera.position.set(0, 6, 10); 
+  camera.lookAt(100, 40, 100); 
+  //camera.layers.enable(1); // Main camera sees 0 and 1
 
 
   // Renderer
@@ -103,8 +103,8 @@ renderer.shadowMap.enabled = true;
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableZoom = true;
   controls.enablePan = false; // keeps it like a head-turning camera
-  controls.autoRotate = true;
-controls.autoRotateSpeed = 1.0;
+  //controls.autoRotate = true;
+  //controls.autoRotateSpeed = 3.0;
 
   window.addEventListener("resize", onWindowResize);
 
@@ -115,9 +115,9 @@ const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
 
   const bokeh = new BokehPass(scene, camera, {
-    focus: 10.0,        // distance where image is sharp
-    aperture: 0.0005,  // blur strength (smaller = subtle blur)
-    maxblur: 0.1      // max blur allowed
+    focus: 50.0,        // distance where image is sharp
+    aperture: 0.0001,  // blur strength (smaller = subtle blur)
+    maxblur: 0.01      // max blur allowed
   });
   composer.addPass(bokeh);
   
@@ -125,7 +125,6 @@ composer.addPass(new RenderPass(scene, camera));
 
 let lotWidth = 240; 
 let lotLength = 200; 
-let stLights = []; 
 let stLight = new THREE.Object3D();
 
 // 
@@ -161,7 +160,7 @@ function animate() {
 
     if (flower.position.y < target) {
       // move up gradually
-      flower.position.y += Math.random() * 0.02;
+      flower.position.y += Math.random() * 0.05;
 
       // clamp so it doesn't overshoot
       if (flower.position.y > target) {
@@ -170,10 +169,14 @@ function animate() {
     }
 
 });
-
+// camera
+  if(camera.position.z<75) {
+    camera.position.z += 0.05; // increase slowly → zoom out
+    camera.position.x +=0.01
+  }
 
   controls.update(); // important
-  renderer.render(scene, camera);
+  composer.render();
 }
 
 function onWindowResize() {
@@ -239,7 +242,7 @@ loader.load("media/parking_lot/brooklyn_street_row_buildings_low_poly/scene.gltf
 
   const cityMain = gltf.scene;
   cityMain.position.set(100, 0.01, 0); 
-  cityMain.scale.set(5.8, 5.8, 5.8); // uniform scale
+  cityMain.scale.set(4.8, 4.8, 4.8); // uniform scale
 
   cityMain.rotation.y = Math.PI;
 

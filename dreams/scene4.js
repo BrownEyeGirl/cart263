@@ -25,13 +25,15 @@ import { RGBELoader } from 'https://cdn.jsdelivr.net/npm/three@0.160/examples/js
 // fadein  
 const fadeOverlay = document.getElementById("fade")
 
+//fadeOverlay.innerHTML = "<h1> Going Deeper... </h1>"
+
 fadeOverlay.style.position = "fixed";
 fadeOverlay.style.top = "0";
 fadeOverlay.style.left = "0";
 fadeOverlay.style.width = "100vw";
 fadeOverlay.style.height = "100vh";
 
-fadeOverlay.style.background = "black";
+fadeOverlay.style.background = "blue";
 fadeOverlay.style.opacity = "1";
 fadeOverlay.style.pointerEvents = "none";
 fadeOverlay.style.zIndex = "9999";
@@ -44,7 +46,7 @@ document.body.appendChild(fadeOverlay);
 // trigger fade after a short delay (or call whenever you want)
 setTimeout(() => {
   fadeOverlay.style.opacity = "0";
-}, 200);
+}, 500);
 
 
 // create scene 
@@ -91,7 +93,7 @@ scene.add(directionalLight)
 
 
 // to see, ambient light 
-const light = new THREE.AmbientLight( 0xFFB6C1, 0.6 ); // soft white light
+const light = new THREE.AmbientLight( 0xF08000, 1 ); // soft  light
 light.distance = 500; 
 scene.add( light );
 
@@ -445,14 +447,6 @@ function updateSuburbs() {
         }
 
       });
-  }
-
-  else {
-    // free up space
-    //scene.remove(carGroup)
-
-    // freeze camera at the end of the line 
-    //camera.position.z=repeat*5-20; 
   }
 
 
