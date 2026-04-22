@@ -1,0 +1,11 @@
+Model Information:
+* title:	Car_Old
+* source:	https://sketchfab.com/3d-models/car-old-f5960d79aaf2471981183b4100d57b4e
+* author:	busko (https://sketchfab.com/busko)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Car_Old" (https://sketchfab.com/3d-models/car-old-f5960d79aaf2471981183b4100d57b4e) by busko (https://sketchfab.com/busko) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

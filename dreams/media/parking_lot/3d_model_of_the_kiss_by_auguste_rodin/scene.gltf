@@ -1,0 +1,344 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        200.57427978515625,
+        -0.2255314737558365,
+        124.79957580566406
+      ],
+      "min": [
+        0.03045845590531826,
+        -123.63818359375,
+        0.5274641513824463
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 786384,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999998211860657,
+        0.9999868273735046,
+        0.9999896883964539
+      ],
+      "min": [
+        -0.9999801516532898,
+        -0.9999671578407288,
+        -0.9999315738677979
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 323856,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 1572768,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        200.54290771484375,
+        -0.009542455896735191,
+        124.99617767333984
+      ],
+      "min": [
+        11.94700813293457,
+        -123.39591979980469,
+        1.6118390560150146
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 2359152,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        1.0,
+        0.9999983906745911,
+        0.9999815821647644
+      ],
+      "min": [
+        -0.9998669028282166,
+        -0.9999967217445374,
+        -0.9999947547912598
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 1295424,
+      "componentType": 5125,
+      "count": 326898,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 3145536,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        200.56092834472656,
+        -2.053995370864868,
+        124.85299682617188
+      ],
+      "min": [
+        0.7281753420829773,
+        -122.42747497558594,
+        0.010782338678836823
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 3931920,
+      "componentType": 5126,
+      "count": 65532,
+      "max": [
+        0.9999999403953552,
+        0.9999809861183167,
+        0.9999484419822693
+      ],
+      "min": [
+        -0.9998471140861511,
+        -0.9999967217445374,
+        -0.9999921917915344
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 2603016,
+      "componentType": 5125,
+      "count": 324105,
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 4718304,
+      "componentType": 5126,
+      "count": 61758,
+      "max": [
+        200.5897216796875,
+        -0.009542455896735191,
+        124.81603240966797
+      ],
+      "min": [
+        0.31815487146377563,
+        -123.54170227050781,
+        0.13136674463748932
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 5459400,
+      "componentType": 5126,
+      "count": 61758,
+      "max": [
+        0.9999998807907104,
+        0.9999868273735046,
+        0.9999896883964539
+      ],
+      "min": [
+        -0.9999285936355591,
+        -0.999994158744812,
+        -0.9999661445617676
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 3899436,
+      "componentType": 5125,
+      "count": 186459,
+      "type": "SCALAR"
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "sgedmash (https://sketchfab.com/sgedmash)",
+      "license": "CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)",
+      "source": "https://sketchfab.com/3d-models/3d-model-of-the-kiss-by-auguste-rodin-5d84e08fe7894532a8f067b94e0efbdf",
+      "title": "3d model of \"The Kiss\" by Auguste Rodin"
+    },
+    "generator": "Sketchfab-12.68.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 4645272,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 6200496,
+      "byteOffset": 4645272,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 10845768,
+      "uri": "scene.bin"
+    }
+  ],
+  "extensionsRequired": [
+    "KHR_materials_pbrSpecularGlossiness"
+  ],
+  "extensionsUsed": [
+    "KHR_materials_pbrSpecularGlossiness"
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "extensions": {
+        "KHR_materials_pbrSpecularGlossiness": {
+          "diffuseFactor": [
+            0.5413523586649952,
+            0.5565087474239326,
+            0.5812044962593176,
+            1.0
+          ],
+          "glossinessFactor": 1.0,
+          "specularFactor": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      "name": "material_0"
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Object_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "indices": 5,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_2",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 6
+          },
+          "indices": 8,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "Object_3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 9
+          },
+          "indices": 11,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "matrix": [
+        -2.6464836992090568e-05,
+        -0.9999868869781494,
+        0.0051154932007191345,
+        0.0,
+        0.9999865889549255,
+        1.664185811782338e-15,
+        0.005173398181796074,
+        0.0,
+        -0.005173330195248127,
+        0.005115561652928369,
+        0.9999735355377197,
+        0.0,
+        162.45892333984375,
+        162.49244689941406,
+        -0.871408462524378,
+        1.0
+      ],
+      "name": "Sketchfab_model"
+    },
+    {
+      "children": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "name": "KissSmall.obj.cleaner.materialmerger.gles"
+    },
+    {
+      "mesh": 0,
+      "name": "Object_2"
+    },
+    {
+      "mesh": 1,
+      "name": "Object_3"
+    },
+    {
+      "mesh": 2,
+      "name": "Object_4"
+    },
+    {
+      "mesh": 3,
+      "name": "Object_5"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "Sketchfab_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Model Information:
+* title:	city_streets
+* source:	https://sketchfab.com/3d-models/city-streets-b51bff3479fc4410a296161730b9ed3b
+* author:	Gh4xt3r (https://sketchfab.com/Gh4xt3r)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "city_streets" (https://sketchfab.com/3d-models/city-streets-b51bff3479fc4410a296161730b9ed3b) by Gh4xt3r (https://sketchfab.com/Gh4xt3r) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -46,13 +46,12 @@ const glowMat = new THREE.MeshStandardMaterial({
 });
 
 
-
 // rain 
 let rainMesh;
 let splashes = [];
-let rainCount = 120;
-const areaSize = 100;
-let rainSpeed = 0.4;
+let rainCount = 1;
+const areaSize = 300;
+let rainSpeed = 0.2;
 
 
 // Directional light
@@ -148,8 +147,9 @@ scene.add(spotLight.target)
 
 
 //ANIMATE
-const sceneDuration1 = 10; // z length of first scene (suburbs)
-const sceneDuration2 = 80 // y length of rising up
+const sceneDuration1 = 100; // z length of first scene (suburbs)
+const sceneDuration2 = 50; // y length of rising up through the rain 
+//const sceneDuration3 = // business men
 
 
 window.requestAnimationFrame(animate);
@@ -159,21 +159,28 @@ function animate() {
     updateSuburbs(); 
     camera.position.z += 0.09; // move forward along Z
     controls.target.set(0, 0, camera.position.z + 100);
+
+    // slowly ease in rain 
+    createRain(camera.position.z);
+  if(rainCount < 5000)
+    rainCount *= 2; 
   }
 
 
   // SCENE 2 - rise up
   if(camera.position.z > sceneDuration1 && camera.position.y < sceneDuration2) { // rise up sequence 
-    scene.fog = new THREE.Fog(0xfff, 10, 20);
-    controls.target.set(0, -1, camera.position.z);
-    camera.position.y += 0.09; // rise up
+    scene.fog = new THREE.Fog(0x000, 10, 20); // new fog, darker, shorter range
+    scene.background = new THREE.Color(0x000) // new background, darker 
+
+    controls.target.set(0, -1, camera.position.z); // face down
+    camera.position.y += 0.03; // rise up
+
+    
   }
   else{
     // add rain 
 
-  createRain(camera.position.z);
-  if(rainCount < 5000)
-    rainCount += 300; 
+  
 //  camera.position.z += 0.01; // move forward along Z
   //camera.position.y+=0.02
 
@@ -181,16 +188,23 @@ function animate() {
   updateSplashes();
   }
 
-  if(camera.position.y > 30) { // when youre high enough
 
-  }
+
 
   // controls updating (always)
   controls.update();
   composer.render();
   window.requestAnimationFrame(animate);
+  window.addEventListener("resize", onWindowResize);
+
 }
 
+
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
 
 /* SPAWN IN INFINITE SUBURB */ 
@@ -526,4 +540,26 @@ function updateRain() {
   }
 
   rainMesh.instanceMatrix.needsUpdate = true;
+}
+
+
+export function createProjectorLight(scene, x, y, z) {
+
+  const light = new THREE.SpotLight(0x5abcd8, 100);
+  
+  light.position.set(x, y, z);
+
+  light.angle = Math.PI / 6;
+  light.penumbra = 1;
+  light.decay = 2;
+  light.distance = 10;
+
+  light.castShadow = true;
+  light.shadow.mapSize.set(1024, 1024);
+  light.shadow.camera.near = 1;
+  light.shadow.camera.far = 20;
+
+  scene.add(light);
+
+  return light;
 }

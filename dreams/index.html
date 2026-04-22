@@ -17,11 +17,34 @@
 }
 </script>
 
-.<script src="https://threejs.org/build/three.min.js"></script>
+<script src="https://threejs.org/build/three.min.js"></script>
 <!--<script type="module" src="rayCastTest.js"></script> --> 
 <!-- <script type="module" src="lightingOne.js"></script> --> 
- <script type="module" src="street.js"></script>
- 
+ <script type="module" src="test.js" id="appScript"></script>
+ <script>
+window.addEventListener("keydown", (e) => {
+
+  if (e.code === "Space") {
+
+      // STOP OLD SCRIPT
+    if (window.shutdownScene) {
+      window.shutdownScene();
+    }
+
+    const oldScript = document.getElementById("appScript");
+    oldScript.remove();
+
+    const newScript = document.createElement("script");
+    newScript.src = "test.js";
+    newScript.type = "module";
+    newScript.id = "appScript";
+
+    document.body.appendChild(newScript);
+
+    console.log("Switched JS file");
+  }
+});
+</script>
   </head>
   <body>
 
