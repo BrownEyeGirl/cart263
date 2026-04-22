@@ -1,0 +1,11 @@
+Model Information:
+* title:	Simple purple bush
+* source:	https://sketchfab.com/3d-models/simple-purple-bush-f7d0903b903941bd804823a8329835b2
+* author:	Creperd (https://sketchfab.com/Creperd)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Simple purple bush" (https://sketchfab.com/3d-models/simple-purple-bush-f7d0903b903941bd804823a8329835b2) by Creperd (https://sketchfab.com/Creperd) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

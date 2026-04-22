@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>DREAMS</title>
+    <style>
+      body { margin: 0; }
+    </style>
+
+<style rel="stylesheet" href="style.css"></style>
+  <script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.182.0/examples/jsm/",
+        "postprocessing": "https://unpkg.com/postprocessing@6.38.2/build/index.js"
+
+  }
+}
+</script>
+
+<script src="https://threejs.org/build/three.min.js"></script>
+<!--<script type="module" src="rayCastTest.js"></script> --> 
+<!-- <script type="module" src="lightingOne.js"></script> --> 
+ <script type="module" src="scene5.js" id="appScript"></script>
+
+ <script>
+  const fadeOverlay=document.getElementById("fade"); 
+  document.addEventListener("keydown", (event) => {
+
+    if (event.code === "Space") {
+    window.location.href = "scene6.html";
+  }
+
+}); 
+ </script> 
+  </head>
+  <body style="background-color: black;">
+    <p style="color:white; position:absolute">5/6</p>
+    <div id="fade"></div>
+  </body>
+</html>

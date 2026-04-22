@@ -1,0 +1,11 @@
+Model Information:
+* title:	Fantasy Tree - Purple Leaves
+* source:	https://sketchfab.com/3d-models/fantasy-tree-purple-leaves-b6d85e59d1714c7ab3cf40b77a46076f
+* author:	FerrisAttia (https://sketchfab.com/FerrisAttia)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Fantasy Tree - Purple Leaves" (https://sketchfab.com/3d-models/fantasy-tree-purple-leaves-b6d85e59d1714c7ab3cf40b77a46076f) by FerrisAttia (https://sketchfab.com/FerrisAttia) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
