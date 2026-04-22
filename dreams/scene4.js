@@ -184,7 +184,7 @@ function animate() {
   // SCENE 1 - move through suburbs   
   if(camera.position.z<sceneDuration1) {
     updateSuburbs(); 
-    camera.position.z += 0.09; // move forward along Z
+    camera.position.z += 0.04; // move forward along Z
     controls.target.set(0, 0, camera.position.z + 100);
 
     // slowly ease in rain 
